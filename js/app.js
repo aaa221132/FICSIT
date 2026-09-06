@@ -143,7 +143,7 @@ function createProductCardHtml(product, index = 0) {
       
       <!-- Admin Mode Badge on Card (Positioned Top Right) -->
       ${isAdmin ? `
-        <div style="position: absolute; top: 8px; right: 8px; z-index: 5; background: var(--accent-orange); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">
+        <div style="position: absolute; top: 8px; left: 8px; z-index: 5; background: var(--accent-orange); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(0,0,0,0.25);">
           Адмін
         </div>
       ` : `
@@ -153,7 +153,7 @@ function createProductCardHtml(product, index = 0) {
       `}
       
       <div class="card-img-wrap" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">
-        <div style="position: absolute; ${isAdmin ? 'top: 36px;' : 'top: 8px;'} right: 8px; display: flex; flex-direction: column; gap: 6px; z-index: 4;">
+        <div style="position: absolute; ${isAdmin ? 'top: 36px;' : 'top: 30px;'} right: 8px; display: flex; flex-direction: column; gap: 6px; z-index: 4;">
           <button class="btn-icon ${isCompared ? 'active' : ''}" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); CompareManager.toggleCompare('${product.id}')" title="Додати до порівняння">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
           </button>

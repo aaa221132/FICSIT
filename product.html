@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Картка товару — FICSIT ELECTRONICS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Header -->
+  <div id="ficsitHeader"></div>
+
+  <main class="main-content">
+    
+    <!-- Breadcrumb & Share Link Bar -->
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div style="font-size: 13px; color: var(--text-secondary);">
+        <a href="index.html">Головна</a> &nbsp;/&nbsp;
+        <a href="catalog.html">Каталог</a> &nbsp;/&nbsp;
+        <span id="breadcrumbTitle" style="color: var(--text-primary); font-weight: 600;">Деталі товару</span>
+      </div>
+
+      <button class="btn-secondary" style="font-size: 12px; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px;" onclick="copyCurrentProductLink()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <span>Скопіювати посилання на товар</span>
+      </button>
+    </div>
+
+    <!-- Product Layout Container -->
+    <div id="productDetailContainer">
+      <!-- Dynamically filled -->
+    </div>
+
+    <!-- Video Player Section (Rendered if videoUrl exists) -->
+    <div id="productVideoSection" style="display: none; margin-top: 36px; background-color: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 24px;">
+      <h3 style="font-size: 18px; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; color: var(--accent-orange); display: flex; align-items: center; gap: 8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        Офіційний Відеоогляд та Тестування
+      </h3>
+      <div id="videoContainer" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius-md); background: #000;">
+        <!-- Dynamically injected iframe or video element -->
+      </div>
+    </div>
+
+    <!-- Interactive User Reviews & Questions System -->
+    <div style="margin-top: 40px;">
+      
+      <!-- System Tabs Switcher -->
+      <div style="display: flex; gap: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+        <button class="btn-secondary active" id="tabReviewsBtn" onclick="switchDetailTab('reviews')" style="font-size: 15px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Відгуки та Оцінки (<span id="tabReviewsCount">0</span>)
+        </button>
+        <button class="btn-secondary" id="tabQuestionsBtn" onclick="switchDetailTab('questions')" style="font-size: 15px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Питання та Відповіді (<span id="tabQuestionsCount">0</span>)
+        </button>
+      </div>
+
+      <!-- REVIEWS & RATINGS TAB CONTENT -->
+      <div id="reviewsTabContent" style="background-color: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 24px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="background-color: var(--bg-card-inner); padding: 16px 24px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center;">
+              <div style="font-size: 36px; font-weight: 900; color: var(--accent-yellow);" id="ratingVal">5.0</div>
+              <span style="font-size: 11px; color: var(--text-secondary);">Оцінка покупців</span>
+            </div>
+            <div>
+              <h3 style="font-size: 16px; font-weight: 800;">Середня оцінка товару</h3>
+              <p style="font-size: 13px; color: var(--text-secondary);">Залишайте відгуки з реальними фото розпаковки та досвідом використання!</p>
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="toggleReviewForm()" style="display: inline-flex; align-items: center; gap: 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Залишити відгук
+          </button>
+        </div>
+
+        <!-- Submit Review Form (Available to registered users) -->
+        <div id="addReviewFormWrap" style="display: none; background-color: var(--bg-card); padding: 22px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 24px;">
+          <div id="reviewAuthCheck">
+            <!-- Rendered form or login prompt -->
+          </div>
+        </div>
+
+        <!-- Submitted Reviews List -->
+        <div id="reviewsList" style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Dynamically filled -->
+        </div>
+
+      </div>
+
+      <!-- QUESTIONS & ANSWERS TAB CONTENT -->
+      <div id="questionsTabContent" style="display: none; background-color: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 24px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color);">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800;">Питання про товар</h3>
+            <p style="font-size: 13px; color: var(--text-secondary);">Поставте питання фахівцям або адміністрації магазину перед покупкою.</p>
+          </div>
+          <button class="btn-primary" onclick="toggleQuestionForm()" style="display: inline-flex; align-items: center; gap: 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Поставити питання
+          </button>
+        </div>
+
+        <!-- Submit Question Form -->
+        <div id="addQuestionFormWrap" style="display: none; background-color: var(--bg-card); padding: 22px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 24px;">
+          <div id="questionAuthCheck">
+            <!-- Rendered form or login prompt -->
+          </div>
+        </div>
+
+        <!-- Submitted Questions List -->
+        <div id="questionsList" style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Dynamically filled -->
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Similar / Related Products Section -->
+    <div style="margin-top: 48px;">
+      <div class="page-title-bar" style="margin-bottom: 16px;">
+        <h2 class="page-title" style="font-size: 20px;">🔥 СХОЖІ ТОВАРИ У ЦІЙ КАТЕГОРІЇ</h2>
+      </div>
+
+      <div class="products-grid" id="similarProductsGrid" style="gap: 16px;">
+        <!-- Dynamically rendered similar product cards -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Photo Viewer Lightbox Modal -->
+  <div class="modal-overlay" id="photoModal" onclick="this.classList.remove('active')">
+    <div style="max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center; position: relative;">
+      <img id="modalZoomImg" src="" alt="Zoom" style="max-width: 100%; max-height: 85vh; border-radius: var(--radius-lg); box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain;">
+      <button class="modal-close" style="position: absolute; top: -35px; right: 0; color: #fff; font-size: 28px;">&times;</button>
+    </div>
+  </div>
+
+  <!-- Common Footer -->
+  <div id="ficsitFooter"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    let currentProductId = '';
+    let attachedReviewImages = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFicsitHeader('catalog');
+      renderFicsitFooter();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      currentProductId = urlParams.get('id');
+
+      if (!currentProductId) {
+        window.location.href = 'catalog.html';
+        return;
+      }
+
+      const product = DataStore.getProductById(currentProductId);
+
+      if (!product) {
+        document.getElementById('productDetailContainer').innerHTML = `
+          <div style="text-align:center; padding: 50px;">
+            <h2>Товар не знайдено</h2>
+            <a href="catalog.html" class="btn-primary" style="display:inline-block; margin-top:16px;">Повернутися в каталог</a>
+          </div>
+        `;
+        return;
+      }
+
+      // Add to Recently Viewed
+      DataStore.addRecentlyViewed(currentProductId);
+
+      document.title = `${product.title} — FICSIT ELECTRONICS`;
+      document.getElementById('breadcrumbTitle').textContent = product.title;
+
+      const isCompared = CompareManager.isInCompare(product.id);
+      const avgRating = DataStore.getAverageRating(product.id);
+
+      document.getElementById('productDetailContainer').innerHTML = `
+        <div class="product-detail-layout">
+          <!-- Gallery / Preview -->
+          <div class="detail-gallery">
+            ${product.image 
+              ? `<img src="${product.image}" alt="${product.title}">`
+              : `<div style="background-color: #ffffff; color: #000000; width: 100%; height: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; text-transform: uppercase; border-radius: var(--radius-md); box-shadow: inset 0 0 20px rgba(0,0,0,0.1);">Немає Зображення</div>`
+            }
+          </div>
+
+          <!-- Info & Actions -->
+          <div class="detail-info">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span class="stock-tag ${product.inStock ? 'in-stock' : 'out-stock'}">
+                ${product.inStock ? 'В наявності' : 'Під замовлення'}
+              </span>
+              <span style="font-size: 13px; color: var(--text-secondary);">Код товару: ${product.id}</span>
+            </div>
+
+            <h1 class="detail-title">${product.title}</h1>
+
+            <div class="detail-price-box">
+              <div>
+                <div class="detail-price-main">${product.price.toLocaleString('uk-UA')} ₴</div>
+              </div>
+              <div style="text-align: right;">
+                <span style="color: var(--accent-yellow); font-weight: 800; font-size: 18px;">★ ${avgRating}</span>
+              </div>
+            </div>
+
+            <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
+              ${product.description}
+            </p>
+
+            <div style="display: flex; gap: 12px; margin-top: 12px;">
+              <button class="btn-primary" style="flex: 2; padding: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;" onclick="CartManager.addToCart('${product.id}')" ${!product.inStock ? 'disabled style="opacity:0.5;"' : ''}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                Додати в кошик
+              </button>
+              <button class="btn-secondary" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="CompareManager.toggleCompare('${product.id}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                ${isCompared ? 'В порівнянні' : 'Порівняти'}
+              </button>
+            </div>
+
+            <!-- Technical Specifications Table -->
+            <div style="margin-top: 20px;">
+              <h3 style="font-size: 15px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Технічні характеристики:</h3>
+              <table class="specs-table">
+                <tr>
+                  <td>Бренд / Виробник</td>
+                  <td>${product.brand || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td>Процесор (CPU)</td>
+                  <td>${product.processor || 'Не вказано'}</td>
+                </tr>
+                <tr>
+                  <td>Оперативна пам'ять (RAM)</td>
+                  <td>${product.ram || 'Не вказано'}</td>
+                </tr>
+                <tr>
+                  <td>Відеокарта (GPU)</td>
+                  <td>${product.gpu || 'Не вказано'}</td>
+                </tr>
+                <tr>
+                  <td>Категорія</td>
+                  <td>${product.category.toUpperCase()}</td>
+                </tr>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      // Render Video Section if videoUrl exists
+      if (product.videoUrl) {
+        renderProductVideo(product.videoUrl);
+      }
+
+      renderReviewFormState();
+      renderQuestionFormState();
+      renderReviewsSection();
+      renderQuestionsSection();
+      renderSimilarProducts(product.category, product.id);
+    });
+
+    function copyCurrentProductLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        if (window.showToast) window.showToast('Пряме посилання на цей товар скопійовано!');
+      });
+    }
+
+    function renderProductVideo(videoUrl) {
+      const videoSection = document.getElementById('productVideoSection');
+      const videoContainer = document.getElementById('videoContainer');
+      
+      let embedHtml = '';
+      if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+        let videoId = '';
+        if (videoUrl.includes('youtu.be/')) {
+          videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
+        } else if (videoUrl.includes('watch?v=')) {
+          videoId = videoUrl.split('watch?v=')[1].split('&')[0];
+        } else if (videoUrl.includes('embed/')) {
+          videoId = videoUrl.split('embed/')[1].split('?')[0];
+        }
+        embedHtml = `<iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top:0; left:0; width: 100%; height: 100%; border:0;"></iframe>`;
+      } else {
+        embedHtml = `<video controls style="position: absolute; top:0; left:0; width: 100%; height: 100%;"><source src="${videoUrl}" type="video/mp4">Ваш браузер не підтримує відео.</video>`;
+      }
+
+      videoContainer.innerHTML = embedHtml;
+      videoSection.style.display = 'block';
+    }
+
+    function renderSimilarProducts(category, excludeId) {
+      const allProducts = DataStore.getProducts();
+      const similar = allProducts.filter(p => p.category === category && p.id !== excludeId).slice(0, 4);
+      const grid = document.getElementById('similarProductsGrid');
+
+      if (similar.length === 0) {
+        const fallback = allProducts.filter(p => p.id !== excludeId).slice(0, 4);
+        grid.innerHTML = fallback.map((p, idx) => createProductCardHtml(p, idx)).join('');
+      } else {
+        grid.innerHTML = similar.map((p, idx) => createProductCardHtml(p, idx)).join('');
+      }
+    }
+
+    function switchDetailTab(tab) {
+      const revTab = document.getElementById('reviewsTabContent');
+      const qTab = document.getElementById('questionsTabContent');
+      const revBtn = document.getElementById('tabReviewsBtn');
+      const qBtn = document.getElementById('tabQuestionsBtn');
+
+      if (tab === 'reviews') {
+        revTab.style.display = 'block';
+        qTab.style.display = 'none';
+        revBtn.classList.add('active');
+        qBtn.classList.remove('active');
+      } else {
+        revTab.style.display = 'none';
+        qTab.style.display = 'block';
+        revBtn.classList.remove('active');
+        qBtn.classList.add('active');
+      }
+    }
+
+    function toggleReviewForm() {
+      const form = document.getElementById('addReviewFormWrap');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleQuestionForm() {
+      const form = document.getElementById('addQuestionFormWrap');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function renderReviewFormState() {
+      const authWrap = document.getElementById('reviewAuthCheck');
+      const user = AuthManager.getCurrentUser();
+
+      if (!user) {
+        authWrap.innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🔒</div>
+            <h4 style="font-size: 16px; font-weight: 800;">Тільки зареєстровані покупці можуть залишати відгуки</h4>
+            <p style="color: var(--text-secondary); font-size: 13px; margin: 8px 0 16px 0;">Увійдіть у свій акаунт або створіть новий, щоб оцінити цей товар та додати фото!</p>
+            <a href="profile.html" class="btn-primary" style="display: inline-block; padding: 10px 24px;">👤 Створити профіль / Увійти</a>
+          </div>
+        `;
+      } else {
+        authWrap.innerHTML = `
+          <h4 style="font-size: 15px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; color: var(--accent-orange);">Написати новий відгук</h4>
+          <form onsubmit="submitUserReview(event)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label class="form-label">Ваше Ім'я (ПІБ)</label>
+                <input type="text" id="revUserName" class="form-input" required value="${user.name}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ваша Оцінка</label>
+                <select id="revRatingSelect" class="form-select">
+                  <option value="5">★★★★★ (5 - Відмінно)</option>
+                  <option value="4">★★★★☆ (4 - Добре)</option>
+                  <option value="3">★★★☆☆ (3 - Нормально)</option>
+                  <option value="2">★★☆☆☆ (2 - Погано)</option>
+                  <option value="1">★☆☆☆☆ (1 - Ужасно)</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Текст відгуку про товар</label>
+              <textarea id="revCommentText" class="form-textarea" rows="3" required placeholder="Поділіться досвідом користування, перевагами та недоліками..."></textarea>
+            </div>
+
+            <!-- Customer Review Photos Upload -->
+            <div class="form-group">
+              <label class="form-label">📸 Додати реальні фото товару (необов'язково)</label>
+              <input type="file" id="revImageFileInput" accept="image/*" class="form-input" onchange="handleReviewImageUpload(event)">
+              <div id="reviewImgPreviewList" style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;"></div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="padding: 10px 24px; font-size: 14px;">
+              Опублікувати відгук
+            </button>
+          </form>
+        `;
+      }
+    }
+
+    function renderQuestionFormState() {
+      const authWrap = document.getElementById('questionAuthCheck');
+      const user = AuthManager.getCurrentUser();
+
+      if (!user) {
+        authWrap.innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🔒</div>
+            <h4 style="font-size: 16px; font-weight: 800;">Тільки зареєстровані користувачі можуть ставити питання</h4>
+            <p style="color: var(--text-secondary); font-size: 13px; margin: 8px 0 16px 0;">Увійдіть у профіль, щоб отримати офіційну відповідь від фахівців магазину.</p>
+            <a href="profile.html" class="btn-primary" style="display: inline-block; padding: 10px 24px;">👤 Створити профіль / Увійти</a>
+          </div>
+        `;
+      } else {
+        authWrap.innerHTML = `
+          <h4 style="font-size: 15px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; color: var(--accent-orange);">Поставити нове питання</h4>
+          <form onsubmit="submitUserQuestion(event)">
+            <div class="form-group">
+              <label class="form-label">Ваше Ім'я</label>
+              <input type="text" id="qUserName" class="form-input" required value="${user.name}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Текст питання</label>
+              <textarea id="qText" class="form-textarea" rows="3" required placeholder="Наприклад: Чи сумісний процесор з материнською платою B650? Чи є гарантія?"></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="padding: 10px 24px; font-size: 14px;">
+              Задати питання
+            </button>
+          </form>
+        `;
+      }
+    }
+
+    function handleReviewImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          attachedReviewImages.push(e.target.result);
+          renderReviewImagePreviews();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function renderReviewImagePreviews() {
+      const container = document.getElementById('reviewImgPreviewList');
+      if (!container) return;
+      container.innerHTML = attachedReviewImages.map((src, idx) => `
+        <div style="position: relative; width: 60px; height: 60px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">
+          <img src="${src}" style="width: 100%; height: 100%; object-fit: cover;">
+          <button type="button" onclick="removeReviewImage(${idx})" style="position: absolute; top: 0; right: 0; background: rgba(0,0,0,0.7); color: #fff; border:none; width: 18px; height: 18px; font-size: 10px; cursor: pointer;">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    function removeReviewImage(index) {
+      attachedReviewImages.splice(index, 1);
+      renderReviewImagePreviews();
+    }
+
+    function renderReviewsSection() {
+      const reviews = DataStore.getReviews(currentProductId);
+      const avgRating = DataStore.getAverageRating(currentProductId);
+      const isAdmin = AuthManager.isAdmin();
+      
+      document.getElementById('ratingVal').textContent = avgRating;
+      document.getElementById('tabReviewsCount').textContent = reviews.length;
+
+      const container = document.getElementById('reviewsList');
+      if (reviews.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
+            Ще немає відгуків про цей товар. Будьте першим, хто залишить відгук та оцінить покупку!
+          </div>
+        `;
+      } else {
+        container.innerHTML = reviews.map(r => {
+          const imagesHtml = (r.images && r.images.length > 0) ? `
+            <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+              ${r.images.map(imgSrc => `
+                <img src="${imgSrc}" alt="Customer photo" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--border-color);" onclick="openPhotoZoom('${imgSrc}')" title="Клікніть для збільшення">
+              `).join('')}
+            </div>
+          ` : '';
+
+          const adminDeleteBtn = isAdmin ? `
+            <button class="btn-danger" style="padding: 3px 8px; font-size: 11px; margin-left: 8px;" onclick="deleteReviewByAdmin('${r.id}')" title="Видалити відгук (як Адміністратор)">
+              🗑️ Видалити відгук
+            </button>
+          ` : '';
+
+          return `
+            <div style="background-color: var(--bg-card); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                <div>
+                  <strong style="color: var(--accent-orange); font-size: 15px;">${r.userName}</strong>
+                  <span style="font-size: 11px; color: #10b981; margin-left: 6px; font-weight: 700;">✓ Підтверджений покупець</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+                  <span style="font-size: 12px; color: var(--text-secondary);">${r.date}</span>
+                  ${adminDeleteBtn}
+                </div>
+              </div>
+              <div style="color: var(--accent-yellow); font-size: 14px; margin-bottom: 8px;">
+                ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
+              </div>
+              <p style="font-size: 14px; color: var(--text-primary); line-height: 1.5; margin: 0;">${r.comment}</p>
+              ${imagesHtml}
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function deleteReviewByAdmin(reviewId) {
+      if (confirm('Ви впевнені, що бажаєте видалити цей відгук як адміністратор?')) {
+        DataStore.deleteReview(currentProductId, reviewId);
+        if (window.showToast) window.showToast('Відгук видалено адміністратором');
+        renderReviewsSection();
+      }
+    }
+
+    function renderQuestionsSection() {
+      const questions = DataStore.getQuestions(currentProductId);
+      const isAdmin = AuthManager.isAdmin();
+      document.getElementById('tabQuestionsCount').textContent = questions.length;
+
+      const container = document.getElementById('questionsList');
+      if (questions.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
+            Ще немає питань щодо цього товару. Поставте перше питання!
+          </div>
+        `;
+      } else {
+        container.innerHTML = questions.map(q => {
+          const adminControls = isAdmin ? `
+            <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="openAnswerModal('${q.id}')">💬 Відповісти як адміністрація</button>
+              <button class="btn-danger" style="padding: 4px 10px; font-size: 11px;" onclick="deleteQuestionByAdmin('${q.id}')">🗑️ Видалити питання</button>
+            </div>
+          ` : '';
+
+          const answerHtml = q.answerText ? `
+            <div style="margin-top: 12px; background: rgba(5, 150, 105, 0.1); border-left: 3px solid #059669; padding: 10px 14px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <strong style="color: #10b981; font-size: 12px; text-transform: uppercase;">🏢 ${q.answeredBy || 'Адміністрація FICSIT'}</strong>
+                <span style="font-size: 11px; color: var(--text-secondary);">${q.answeredDate || ''}</span>
+              </div>
+              <p style="font-size: 13px; color: var(--text-primary); margin: 0; line-height: 1.4;">${q.answerText}</p>
+            </div>
+          ` : '';
+
+          return `
+            <div style="background-color: var(--bg-card); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                <strong style="color: var(--accent-cyan); font-size: 15px;">❓ ${q.userName}</strong>
+                <span style="font-size: 12px; color: var(--text-secondary);">${q.date}</span>
+              </div>
+              <p style="font-size: 14px; color: var(--text-primary); font-weight: 600; margin: 0;">${q.questionText}</p>
+              ${answerHtml}
+              ${adminControls}
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function deleteQuestionByAdmin(questionId) {
+      if (confirm('Видалити це питання як адміністратор?')) {
+        DataStore.deleteQuestion(currentProductId, questionId);
+        if (window.showToast) window.showToast('Питання видалено');
+        renderQuestionsSection();
+      }
+    }
+
+    function openAnswerModal(questionId) {
+      const answer = prompt('Введіть офіційну відповідь адміністратора:');
+      if (answer && answer.trim()) {
+        DataStore.answerQuestion(currentProductId, questionId, answer.trim());
+        if (window.showToast) window.showToast('Офіційну відповідь опубліковано!');
+        renderQuestionsSection();
+      }
+    }
+
+    function openPhotoZoom(src) {
+      document.getElementById('modalZoomImg').src = src;
+      document.getElementById('photoModal').classList.add('active');
+    }
+
+    function submitUserReview(event) {
+      event.preventDefault();
+      if (!AuthManager.isLoggedIn()) {
+        AuthManager.requireAuth('залишати відгуки');
+        return;
+      }
+      const userName = document.getElementById('revUserName').value.trim();
+      const rating = parseInt(document.getElementById('revRatingSelect').value);
+      const comment = document.getElementById('revCommentText').value.trim();
+      const user = AuthManager.getCurrentUser();
+
+      DataStore.addReview(currentProductId, { 
+        userName, 
+        rating, 
+        comment,
+        images: [...attachedReviewImages],
+        userId: user ? user.id : 'usr_anon'
+      });
+      
+      document.getElementById('revCommentText').value = '';
+      attachedReviewImages = [];
+      renderReviewImagePreviews();
+      toggleReviewForm();
+      renderReviewsSection();
+      if (window.showToast) window.showToast('Дякуємо! Ваш відгук із фото збережено.');
+    }
+
+    function submitUserQuestion(event) {
+      event.preventDefault();
+      if (!AuthManager.isLoggedIn()) {
+        AuthManager.requireAuth('задавати питання');
+        return;
+      }
+      const userName = document.getElementById('qUserName').value.trim();
+      const questionText = document.getElementById('qText').value.trim();
+
+      DataStore.addQuestion(currentProductId, { userName, questionText });
+      
+      document.getElementById('qText').value = '';
+      toggleQuestionForm();
+      renderQuestionsSection();
+      if (window.showToast) window.showToast('Дякуємо! Ваше питання опубліковано.');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Панель Адміністратора — FICSIT ELECTRONICS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Header -->
+  <div id="ficsitHeader"></div>
+
+  <main class="main-content">
+
+    <!-- Header Title Bar for Admins -->
+    <div class="page-title-bar" id="adminHeaderBar" style="display: none;">
+      <div>
+        <h1 class="page-title" style="color: var(--accent-orange);">⚡ ЦЕНТР УПРАВЛІННЯ АДМІНІСТРАТОРА</h1>
+        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+          Повний контроль над товарами магазину, фотографіями, характеристиками, модерацією відгуків та замовленнями.
+        </div>
+      </div>
+      <button class="btn-primary" onclick="openAddProductModal()" style="font-size: 14px; padding: 10px 20px;">
+        <span>+ Додати новий товар</span>
+      </button>
+    </div>
+
+    <!-- Admin Access Guard (Clean Login Form for Admins) -->
+    <div id="adminAccessGuard" style="display: none; text-align: center; max-width: 480px; margin: 40px auto; padding: 36px 30px; background-color: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-lg);">
+      <div style="font-size: 48px; margin-bottom: 12px;">🔒</div>
+      <h2 style="font-size: 20px; font-weight: 800; text-transform: uppercase; color: var(--accent-orange);">Вхід до Панелі Адміністратора</h2>
+      <p style="color: var(--text-secondary); margin-top: 6px; font-size: 13px;">Введіть дані облікового запису адміністратора для доступу:</p>
+      
+      <form onsubmit="handleDirectAdminLogin(event)" style="margin-top: 20px; text-align: left;">
+        <div class="form-group">
+          <label class="form-label">Пошта</label>
+          <input type="email" id="directAdminEmail" class="form-input" required placeholder="admin@store.ua">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input type="password" id="directAdminPassword" class="form-input" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px; margin-top: 10px;">
+          Увійти в адмін-панель
+        </button>
+      </form>
+    </div>
+
+    <!-- Admin Content Layout with Navigation Tabs -->
+    <div id="adminMainContent" style="display: none;">
+      
+      <!-- Admin Navigation Tabs -->
+      <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 14px; flex-wrap: wrap;">
+        <button class="btn-secondary active" id="tabAdminProdsBtn" onclick="switchAdminTab('products')" style="font-size: 14px; font-weight: 800;">
+          📦 Товари магазину (<span id="adminTabProdsCount">0</span>)
+        </button>
+        <button class="btn-secondary" id="tabAdminReviewsBtn" onclick="switchAdminTab('reviews')" style="font-size: 14px; font-weight: 800;">
+          💬 Відгуки та коментарі (<span id="adminTabReviewsCount">0</span>)
+        </button>
+        <button class="btn-secondary" id="tabAdminQuestionsBtn" onclick="switchAdminTab('questions')" style="font-size: 14px; font-weight: 800;">
+          ❓ Питання покупців (<span id="adminTabQuestionsCount">0</span>)
+        </button>
+        <button class="btn-secondary" id="tabAdminOrdersBtn" onclick="switchAdminTab('orders')" style="font-size: 14px; font-weight: 800;">
+          🚚 Замовлення клієнтів (<span id="adminTabOrdersCount">0</span>)
+        </button>
+      </div>
+
+      <!-- TAB 1: PRODUCTS MANAGEMENT -->
+      <div id="adminTabProducts">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <span style="font-size: 14px; font-weight: 700; color: var(--text-secondary);" id="adminProductCount">Усього товарів у базі: 0</span>
+          <input type="text" id="adminSearchInput" class="form-input" placeholder="Пошук товарів за назвою чи брендом..." style="max-width: 350px;" onkeyup="renderAdminTable()">
+        </div>
+
+        <div style="overflow-x: auto; background: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Фото</th>
+                <th>Назва товару</th>
+                <th>Категорія</th>
+                <th>Бренд / CPU / GPU</th>
+                <th>Ціна (₴)</th>
+                <th>Наявність</th>
+                <th style="text-align: center;">Дії та Посилання</th>
+              </tr>
+            </thead>
+            <tbody id="adminProductsTableBody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: REVIEWS MODERATION -->
+      <div id="adminTabReviews" style="display: none;">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 16px; font-weight: 800; text-transform: uppercase;">Всі відгуки та оцінки покупців</h3>
+          <span style="font-size: 12px; color: var(--text-secondary);">Клікніть на червоний хрестик ✕ для видалення</span>
+        </div>
+
+        <div id="adminReviewsList" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Dynamically rendered reviews -->
+        </div>
+      </div>
+
+      <!-- TAB 3: QUESTIONS & ANSWERS MODERATION -->
+      <div id="adminTabQuestions" style="display: none;">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 16px; font-weight: 800; text-transform: uppercase;">Питання покупців та офіційні відповіді</h3>
+          <span style="font-size: 12px; color: var(--text-secondary);">Надавайте відповіді від імені магазину</span>
+        </div>
+
+        <div id="adminQuestionsList" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Dynamically rendered questions -->
+        </div>
+      </div>
+
+      <!-- TAB 4: ORDERS MANAGEMENT -->
+      <div id="adminTabOrders" style="display: none;">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 16px; font-weight: 800; text-transform: uppercase;">Усі замовлення магазину</h3>
+          <span style="font-size: 12px; color: var(--text-secondary);">Змінюйте статуси доставки та оплати</span>
+        </div>
+
+        <div id="adminOrdersList" style="display: flex; flex-direction: column; gap: 14px;">
+          <!-- Dynamically rendered orders -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Add / Edit Full Product Modal Form -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-box" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitleText" style="color: var(--accent-orange);">Додати новий товар</h3>
+        <button class="modal-close" onclick="closeProductModal()">&times;</button>
+      </div>
+
+      <form id="productForm" onsubmit="saveProductForm(event)">
+        <input type="hidden" id="prodEditId">
+
+        <div class="form-group">
+          <label class="form-label">Назва товару</label>
+          <input type="text" id="prodTitle" class="form-input" required placeholder="НАПРИКЛАД: Ноутбук Apple MacBook Pro 16 M3 Max">
+        </div>
+
+        <!-- Image Upload & Removal Group -->
+        <div class="form-group">
+          <label class="form-label">Зображення товару (URL або Завантаження файлу з диска)</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="prodImageURL" class="form-input" placeholder="Введіть URL фото або оберіть файл..." style="flex: 2;" oninput="updateImagePreviewFromUrl(this.value)">
+            <input type="file" id="prodImageFile" accept="image/*" class="form-input" style="flex: 1;" onchange="handleImageUpload(event)">
+          </div>
+          <input type="hidden" id="prodImageBase64">
+          
+          <div id="imagePreviewBox" style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <img id="imgPreview" src="" alt="Preview" style="width: 50px; height: 50px; object-fit: contain; background: #fff; border-radius: 4px; padding: 2px;">
+              <div>
+                <strong id="imgPreviewTitle" style="font-size: 13px; color: #10b981;">✅ Зображення встановлено</strong>
+                <div id="imgPreviewDesc" style="font-size: 11px; color: var(--text-secondary);">Відображається на вітрині та в картці товару</div>
+              </div>
+            </div>
+            <button type="button" class="btn-danger" style="padding: 4px 10px; font-size: 11px;" onclick="clearProductImage()">
+              🗑️ Прибрати фото
+            </button>
+          </div>
+        </div>
+
+        <!-- Video URL Group -->
+        <div class="form-group">
+          <label class="form-label">🎬 Посилання на відеоогляд (YouTube URL або MP4)</label>
+          <input type="text" id="prodVideoURL" class="form-input" placeholder="https://www.youtube.com/watch?v=... або https://youtu.be/...">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Категорія</label>
+            <select id="prodCategory" class="form-select">
+              <option value="laptops">Ноутбуки</option>
+              <option value="components">Процесори та Відеокарти</option>
+              <option value="smartphones">Смартфони</option>
+              <option value="monitors">Монітори</option>
+              <option value="accessories">Аксесуари</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Бренд / Виробник</label>
+            <input type="text" id="prodBrand" class="form-input" required placeholder="Apple, ASUS, Intel, AMD, NVIDIA..." value="Apple">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ціна в гривнях (₴)</label>
+          <input type="number" id="prodPrice" class="form-input" required placeholder="50000">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Процесор (CPU)</label>
+            <input type="text" id="prodProcessor" class="form-input" placeholder="Apple M3 Max, i9-14900K..." value="N/A">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Оперативна пам'ять (RAM)</label>
+            <input type="text" id="prodRam" class="form-input" placeholder="16 GB, 32 GB, 64 GB..." value="N/A">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Відеокарта (GPU)</label>
+            <input type="text" id="prodGpu" class="form-input" placeholder="RTX 4090, 40-core GPU..." value="N/A">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="prodInStock" checked>
+            <span>Товар є в наявності на складі</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Опис товару та характеристики</label>
+          <textarea id="prodDescription" class="form-textarea" rows="4" placeholder="Детальний опис товару, переваги, можливості..."></textarea>
+        </div>
+
+        <!-- Direct Product URL (Only for existing products) -->
+        <div id="productDirectUrlBox" style="display: none; background: var(--bg-card); padding: 12px; border-radius: var(--radius-md); border: 1px dashed var(--accent-cyan); margin-bottom: 16px;">
+          <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--accent-cyan); margin-bottom: 4px;">🔗 Пряме посилання на товар:</div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="directProductUrlInput" class="form-input" readonly style="font-size: 12px; background: rgba(0,0,0,0.2);">
+            <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="copyDirectProductUrl()">Копіювати</button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+          <button type="button" class="btn-secondary" style="flex: 1;" onclick="closeProductModal()">Скасувати</button>
+          <button type="submit" class="btn-primary" style="flex: 2; padding: 12px;" id="modalSubmitBtn">Зберегти товар</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Common Footer -->
+  <div id="ficsitFooter"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    function checkAdminAccess() {
+      const isAdmin = AuthManager.isAdmin();
+      if (!isAdmin) {
+        document.getElementById('adminHeaderBar').style.display = 'none';
+        document.getElementById('adminMainContent').style.display = 'none';
+        document.getElementById('adminAccessGuard').style.display = 'block';
+      } else {
+        document.getElementById('adminHeaderBar').style.display = 'flex';
+        document.getElementById('adminMainContent').style.display = 'block';
+        document.getElementById('adminAccessGuard').style.display = 'none';
+        renderAdminDashboard();
+      }
+    }
+
+    function handleDirectAdminLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('directAdminEmail').value;
+      const pass = document.getElementById('directAdminPassword').value;
+      const res = AuthManager.loginUser(email, pass);
+      if (res.success) {
+        renderFicsitHeader('admin');
+        checkAdminAccess();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFicsitHeader('admin');
+      renderFicsitFooter();
+      checkAdminAccess();
+    });
+
+    function switchAdminTab(tab) {
+      document.getElementById('adminTabProducts').style.display = tab === 'products' ? 'block' : 'none';
+      document.getElementById('adminTabReviews').style.display = tab === 'reviews' ? 'block' : 'none';
+      document.getElementById('adminTabQuestions').style.display = tab === 'questions' ? 'block' : 'none';
+      document.getElementById('adminTabOrders').style.display = tab === 'orders' ? 'block' : 'none';
+
+      document.getElementById('tabAdminProdsBtn').classList.toggle('active', tab === 'products');
+      document.getElementById('tabAdminReviewsBtn').classList.toggle('active', tab === 'reviews');
+      document.getElementById('tabAdminQuestionsBtn').classList.toggle('active', tab === 'questions');
+      document.getElementById('tabAdminOrdersBtn').classList.toggle('active', tab === 'orders');
+
+      if (tab === 'products') renderAdminTable();
+      if (tab === 'reviews') renderAdminReviews();
+      if (tab === 'questions') renderAdminQuestions();
+      if (tab === 'orders') renderAdminOrders();
+    }
+
+    function renderAdminDashboard() {
+      const products = DataStore.getProducts();
+      const reviews = DataStore.getAllReviews();
+      const questions = DataStore.getAllQuestions();
+      const orders = DataStore.getAllOrdersAdmin();
+
+      document.getElementById('adminTabProdsCount').textContent = products.length;
+      document.getElementById('adminTabReviewsCount').textContent = reviews.length;
+      document.getElementById('adminTabQuestionsCount').textContent = questions.length;
+      document.getElementById('adminTabOrdersCount').textContent = orders.length;
+
+      renderAdminTable();
+    }
+
+    /* --- PRODUCTS TAB --- */
+    function renderAdminTable() {
+      let products = DataStore.getProducts();
+      const searchQuery = (document.getElementById('adminSearchInput').value || '').toLowerCase();
+
+      if (searchQuery) {
+        products = products.filter(p => p.title.toLowerCase().includes(searchQuery) || (p.brand && p.brand.toLowerCase().includes(searchQuery)));
+      }
+
+      document.getElementById('adminProductCount').textContent = `Усього товарів у базі: ${products.length}`;
+
+      const tbody = document.getElementById('adminProductsTableBody');
+      tbody.innerHTML = products.map(p => {
+        const imgHtml = (p.image && p.image.trim()) 
+          ? `<img src="${p.image}" alt="${p.title}" style="width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 4px; padding: 2px;">`
+          : `<div style="width: 44px; height: 44px; background: #fff; color: #000; font-size: 8px; font-weight: 900; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 4px; line-height: 1;">НЕМАЄ ЗОБР.</div>`;
+
+        const productPageUrl = `product.html?id=${p.id}`;
+
+        return `
+          <tr>
+            <td>${imgHtml}</td>
+            <td>
+              <a href="${productPageUrl}" target="_blank" style="font-weight: 800; color: var(--text-primary); text-decoration: none; text-transform: uppercase;" title="Відкрити сторінку товару">
+                ${p.title} ↗
+              </a>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">ID: ${p.id}</div>
+            </td>
+            <td><span style="font-size: 11px; text-transform: uppercase; color: var(--accent-cyan); font-weight: 700;">${p.category}</span></td>
+            <td style="font-size: 12px;">
+              <strong>${p.brand || 'N/A'}</strong>
+              ${p.processor && p.processor !== 'N/A' ? `<div style="color: var(--text-secondary); font-size: 11px;">CPU: ${p.processor}</div>` : ''}
+              ${p.gpu && p.gpu !== 'N/A' ? `<div style="color: var(--text-secondary); font-size: 11px;">GPU: ${p.gpu}</div>` : ''}
+            </td>
+            <td style="font-family: var(--font-mono); font-weight: 800; color: var(--accent-orange); font-size: 14px;">${p.price.toLocaleString('uk-UA')} ₴</td>
+            <td><span class="stock-tag ${p.inStock ? 'in-stock' : 'out-stock'}">${p.inStock ? 'Є' : 'Немає'}</span></td>
+            <td style="text-align: center;">
+              <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="copyLink('${productPageUrl}')" title="Скопіювати посилання на товар">🔗 Посилання</button>
+                <button class="btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="openEditProductModal('${p.id}')">✏️ Редагувати</button>
+                <button class="btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteProductAction('${p.id}')">🗑️ Видалити</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /* --- REVIEWS MODERATION TAB --- */
+    function renderAdminReviews() {
+      const reviews = DataStore.getAllReviews();
+      const container = document.getElementById('adminReviewsList');
+
+      if (reviews.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 40px; background: var(--bg-secondary); border-radius: var(--radius-md); color: var(--text-secondary);">Немає залишених відгуків у системі.</div>`;
+        return;
+      }
+
+      container.innerHTML = reviews.map(r => `
+        <div style="background-color: var(--bg-secondary); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 250px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+              <a href="product.html?id=${r.productId}" target="_blank" style="font-weight: 800; font-size: 13px; color: var(--accent-orange); text-decoration: none;">
+                📦 ${r.productTitle} ↗
+              </a>
+              <span style="font-size: 11px; color: var(--text-secondary);">${r.date}</span>
+            </div>
+
+            <div style="margin-bottom: 6px;">
+              <strong>${r.userName}</strong> &nbsp;
+              <span style="color: var(--accent-yellow); font-size: 13px;">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-primary); margin: 0; line-height: 1.4;">${r.comment}</p>
+
+            ${(r.images && r.images.length > 0) ? `
+              <div style="display: flex; gap: 8px; margin-top: 8px;">
+                ${r.images.map(img => `<img src="${img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">`).join('')}
+              </div>
+            ` : ''}
+          </div>
+
+          <button style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid #ef4444; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; cursor: pointer; padding: 0;" onclick="adminDeleteReview('${r.productId}', '${r.id}')" title="Видалити відгук">
+            ✕
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function adminDeleteReview(productId, reviewId) {
+      if (confirm('Видалити цей відгук (коментар)?')) {
+        DataStore.deleteReview(productId, reviewId);
+        if (window.showToast) window.showToast('Відгук успішно видалено');
+        renderAdminDashboard();
+        renderAdminReviews();
+      }
+    }
+
+    /* --- QUESTIONS MODERATION TAB --- */
+    function renderAdminQuestions() {
+      const questions = DataStore.getAllQuestions();
+      const container = document.getElementById('adminQuestionsList');
+
+      if (questions.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 40px; background: var(--bg-secondary); border-radius: var(--radius-md); color: var(--text-secondary);">Немає запитань від користувачів.</div>`;
+        return;
+      }
+
+      container.innerHTML = questions.map(q => `
+        <div style="background-color: var(--bg-secondary); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <a href="product.html?id=${q.productId}" target="_blank" style="font-weight: 800; font-size: 13px; color: var(--accent-cyan); text-decoration: none;">
+              📦 ${q.productTitle} ↗
+            </a>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="adminAnswerQuestion('${q.productId}', '${q.id}')">
+                💬 ${q.answerText ? 'Змінити відповідь' : 'Відповісти'}
+              </button>
+              <button style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid #ef4444; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; cursor: pointer; padding: 0;" onclick="adminDeleteQuestion('${q.productId}', '${q.id}')" title="Видалити питання">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 4px;">
+            <strong style="color: var(--accent-orange);">${q.userName}:</strong>
+            <span style="font-size: 14px; font-weight: 600;">${q.questionText}</span>
+            <span style="font-size: 11px; color: var(--text-secondary); margin-left: 8px;">${q.date}</span>
+          </div>
+
+          ${q.answerText ? `
+            <div style="margin-top: 8px; background: rgba(5, 150, 105, 0.1); border-left: 3px solid #059669; padding: 8px 12px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 13px;">
+              <strong style="color: #10b981;">🏢 Відповідь адміністрації (${q.answeredDate}):</strong>
+              <div>${q.answerText}</div>
+            </div>
+          ` : '<div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">⏳ Ще немає відповіді</div>'}
+        </div>
+      `).join('');
+    }
+
+    function adminAnswerQuestion(productId, questionId) {
+      const ans = prompt('Введіть офіційну відповідь адміністрації:');
+      if (ans && ans.trim()) {
+        DataStore.answerQuestion(productId, questionId, ans.trim());
+        if (window.showToast) window.showToast('Відповідь збережено!');
+        renderAdminDashboard();
+        renderAdminQuestions();
+      }
+    }
+
+    function adminDeleteQuestion(productId, questionId) {
+      if (confirm('Видалити це питання?')) {
+        DataStore.deleteQuestion(productId, questionId);
+        if (window.showToast) window.showToast('Питання видалено');
+        renderAdminDashboard();
+        renderAdminQuestions();
+      }
+    }
+
+    /* --- ORDERS MANAGEMENT TAB --- */
+    function renderAdminOrders() {
+      const orders = DataStore.getAllOrdersAdmin();
+      const container = document.getElementById('adminOrdersList');
+
+      if (orders.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 40px; background: var(--bg-secondary); border-radius: var(--radius-md); color: var(--text-secondary);">Немає замовлень у системі.</div>`;
+        return;
+      }
+
+      container.innerHTML = orders.map(o => `
+        <div style="background-color: var(--bg-secondary); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <strong style="font-size: 15px; color: var(--accent-orange);">Замовлення #${o.id}</strong>
+              <span style="font-size: 12px; color: var(--text-secondary); margin-left: 8px;">${o.date}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 12px; font-weight: 700;">Статус:</span>
+              <select class="form-select" style="padding: 4px 8px; font-size: 12px; width: auto;" onchange="changeOrderStatus('${o.id}', this.value)">
+                <option value="В обробці" ${o.status==='В обробці'?'selected':''}>⏳ В обробці</option>
+                <option value="Прямує до отримувача" ${o.status==='Прямує до отримувача'?'selected':''}>🚚 Прямує до отримувача</option>
+                <option value="Доставлено" ${o.status==='Доставлено'?'selected':''}>✅ Доставлено</option>
+                <option value="Скасовано" ${o.status==='Скасовано'?'selected':''}>❌ Скасовано</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">Клієнт: <strong>${o.customerName || 'Покупець'}</strong> (${o.customerPhone || ''}) | ${o.delivery} (${o.address})</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                ${(o.items || []).map(i => `
+                  <div style="font-size: 12px; display: flex; justify-content: space-between;">
+                    <a href="product.html?id=${i.id}" target="_blank" style="color: var(--text-primary); text-decoration: none;">• ${i.title} (×${i.qty})</a>
+                    <strong style="font-family: var(--font-mono);">${(i.price * i.qty).toLocaleString('uk-UA')} ₴</strong>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            <div style="text-align: right; border-left: 1px solid var(--border-color); padding-left: 16px;">
+              <div style="font-size: 11px; color: var(--text-secondary);">Оплата: ${o.payment}</div>
+              <div style="font-size: 16px; font-weight: 900; color: var(--accent-orange); font-family: var(--font-mono); margin-top: 4px;">
+                Разом: ${o.total.toLocaleString('uk-UA')} ₴
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function changeOrderStatus(orderId, newStatus) {
+      DataStore.updateOrderStatusAdmin(orderId, newStatus);
+      if (window.showToast) window.showToast(`Статус замовлення #${orderId} змінено на: ${newStatus}`);
+    }
+
+    /* --- PRODUCT MODAL & ACTIONS --- */
+    function copyLink(relUrl) {
+      const fullUrl = window.location.origin + '/' + relUrl;
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        if (window.showToast) window.showToast('Посилання на товар скопійовано в буфер обміну!');
+      });
+    }
+
+    function updateImagePreviewFromUrl(url) {
+      const img = document.getElementById('imgPreview');
+      const title = document.getElementById('imgPreviewTitle');
+      const desc = document.getElementById('imgPreviewDesc');
+      if (url.trim()) {
+        img.src = url.trim();
+        img.style.display = 'block';
+        title.textContent = '✅ Зображення встановлено';
+        title.style.color = '#10b981';
+        desc.textContent = 'Відображається на вітрині та в картці товару';
+      } else {
+        img.style.display = 'none';
+        title.textContent = '❌ Зображення відсутнє';
+        title.style.color = 'var(--text-secondary)';
+        desc.textContent = 'Буде відображатися плашка "НЕМАЄ ЗОБРАЖЕННЯ"';
+      }
+    }
+
+    function clearProductImage() {
+      document.getElementById('prodImageURL').value = '';
+      document.getElementById('prodImageFile').value = '';
+      document.getElementById('prodImageBase64').value = '';
+      const img = document.getElementById('imgPreview');
+      img.style.display = 'none';
+      img.src = '';
+      const title = document.getElementById('imgPreviewTitle');
+      const desc = document.getElementById('imgPreviewDesc');
+      title.textContent = '❌ Зображення відсутнє';
+      title.style.color = 'var(--text-secondary)';
+      desc.textContent = 'Буде відображатися плашка "НЕМАЄ ЗОБРАЖЕННЯ"';
+    }
+
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('prodImageBase64').value = e.target.result;
+          document.getElementById('prodImageURL').value = ''; 
+          const img = document.getElementById('imgPreview');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          const title = document.getElementById('imgPreviewTitle');
+          const desc = document.getElementById('imgPreviewDesc');
+          title.textContent = '✅ Завантажено файл зображення';
+          title.style.color = '#10b981';
+          desc.textContent = 'Зображення збережено у пам\'ять товару';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function openAddProductModal() {
+      document.getElementById('modalTitleText').textContent = 'Додати новий товар';
+      document.getElementById('prodEditId').value = '';
+      document.getElementById('productForm').reset();
+      document.getElementById('prodImageBase64').value = '';
+      document.getElementById('productDirectUrlBox').style.display = 'none';
+      document.getElementById('prodInStock').checked = true;
+      clearProductImage();
+      document.getElementById('productModal').classList.add('active');
+    }
+
+    function openEditProductModal(id) {
+      const p = DataStore.getProductById(id);
+      if (!p) return;
+
+      document.getElementById('modalTitleText').textContent = 'Редагувати товар';
+      document.getElementById('prodEditId').value = p.id;
+      document.getElementById('prodTitle').value = p.title;
+      document.getElementById('prodCategory').value = p.category;
+      document.getElementById('prodBrand').value = p.brand || '';
+      document.getElementById('prodPrice').value = p.price;
+      document.getElementById('prodProcessor').value = p.processor || 'N/A';
+      document.getElementById('prodRam').value = p.ram || 'N/A';
+      document.getElementById('prodGpu').value = p.gpu || 'N/A';
+      document.getElementById('prodVideoURL').value = p.videoUrl || '';
+      document.getElementById('prodInStock').checked = p.inStock;
+      document.getElementById('prodDescription').value = p.description || '';
+      
+      document.getElementById('prodImageFile').value = '';
+      document.getElementById('prodImageURL').value = (p.image && !p.image.startsWith('data:')) ? p.image : '';
+      document.getElementById('prodImageBase64').value = (p.image && p.image.startsWith('data:')) ? p.image : '';
+
+      const img = document.getElementById('imgPreview');
+      const title = document.getElementById('imgPreviewTitle');
+      const desc = document.getElementById('imgPreviewDesc');
+
+      if (p.image && p.image.trim()) {
+        img.src = p.image;
+        img.style.display = 'block';
+        title.textContent = '✅ Зображення встановлено';
+        title.style.color = '#10b981';
+        desc.textContent = 'Відображається на вітрині та в картці товару';
+      } else {
+        img.style.display = 'none';
+        title.textContent = '❌ Зображення відсутнє';
+        title.style.color = 'var(--text-secondary)';
+        desc.textContent = 'Буде відображатися плашка "НЕМАЄ ЗОБРАЖЕННЯ"';
+      }
+
+      const directUrl = `${window.location.origin}/product.html?id=${p.id}`;
+      document.getElementById('directProductUrlInput').value = directUrl;
+      document.getElementById('productDirectUrlBox').style.display = 'block';
+
+      document.getElementById('productModal').classList.add('active');
+    }
+
+    function copyDirectProductUrl() {
+      const input = document.getElementById('directProductUrlInput');
+      navigator.clipboard.writeText(input.value).then(() => {
+        if (window.showToast) window.showToast('Пряме посилання скопійовано!');
+      });
+    }
+
+    function closeProductModal() {
+      document.getElementById('productModal').classList.remove('active');
+    }
+
+    function saveProductForm(event) {
+      event.preventDefault();
+      const editId = document.getElementById('prodEditId').value;
+      
+      const imgUrl = document.getElementById('prodImageURL').value.trim();
+      const imgB64 = document.getElementById('prodImageBase64').value;
+      const finalImage = imgB64 || imgUrl || '';
+
+      const productData = {
+        id: editId || ('prod_' + Date.now()),
+        title: document.getElementById('prodTitle').value.trim(),
+        category: document.getElementById('prodCategory').value,
+        brand: document.getElementById('prodBrand').value.trim(),
+        price: parseFloat(document.getElementById('prodPrice').value) || 0,
+        processor: document.getElementById('prodProcessor').value.trim(),
+        ram: document.getElementById('prodRam').value.trim(),
+        gpu: document.getElementById('prodGpu').value.trim(),
+        videoUrl: document.getElementById('prodVideoURL').value.trim(),
+        inStock: document.getElementById('prodInStock').checked,
+        description: document.getElementById('prodDescription').value.trim(),
+        image: finalImage
+      };
+
+      if (editId) {
+        DataStore.updateProduct(productData);
+        if (window.showToast) window.showToast(`Товар "${productData.title}" оновлено у базі!`);
+      } else {
+        DataStore.addProduct(productData);
+        if (window.showToast) window.showToast(`Новий товар "${productData.title}" додано у базу!`);
+      }
+
+      closeProductModal();
+      renderAdminDashboard();
+    }
+
+    function deleteProductAction(id) {
+      const p = DataStore.getProductById(id);
+      if (confirm(`Ви впевнені, що бажаєте видалити товар "${p ? p.title : id}" з бази даних?`)) {
+        DataStore.deleteProduct(id);
+        if (window.showToast) window.showToast('Товар видалено з бази даних');
+        renderAdminDashboard();
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Порівняння товарів — FICSIT ELECTRONICS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Header -->
+  <div id="ficsitHeader"></div>
+
+  <main class="main-content">
+
+    <div class="page-title-bar">
+      <h1 class="page-title">ПОРІВНЯННЯ ТОВАРІВ</h1>
+      <button class="btn-secondary" onclick="clearCompareList()" id="clearCompareBtn" style="font-size: 12px;">Очистити порівняння</button>
+    </div>
+
+    <!-- Comparison Matrix -->
+    <div class="compare-table-wrap" id="compareContainer">
+      <!-- Dynamically filled -->
+    </div>
+
+    <!-- Empty Comparison Screen -->
+    <div id="emptyCompareView" style="display: none; text-align: center; padding: 60px 20px; background-color: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+      <div style="display: flex; justify-content: center; margin-bottom: 14px; color: var(--text-muted);">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      </div>
+      <h3 style="font-size: 18px; text-transform: uppercase;">Список порівняння порожній</h3>
+      <p style="color: var(--text-secondary); margin-top: 6px;">Натисніть кнопку порівняння в картці товару, щоб додати його до таблиці!</p>
+      <a href="catalog.html" class="btn-primary" style="display: inline-block; margin-top: 16px;">Перейти до каталогу</a>
+    </div>
+
+  </main>
+
+  <!-- Common Footer -->
+  <div id="ficsitFooter"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFicsitHeader('catalog');
+      renderFicsitFooter();
+      renderComparison();
+    });
+
+    function renderComparison() {
+      const products = CompareManager.getCompareProducts();
+      const container = document.getElementById('compareContainer');
+      const emptyView = document.getElementById('emptyCompareView');
+      const clearBtn = document.getElementById('clearCompareBtn');
+
+      if (products.length === 0) {
+        container.style.display = 'none';
+        clearBtn.style.display = 'none';
+        emptyView.style.display = 'block';
+        return;
+      }
+
+      container.style.display = 'block';
+      clearBtn.style.display = 'block';
+      emptyView.style.display = 'none';
+
+      container.innerHTML = `
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width: 200px;">Характеристики</th>
+              ${products.map(p => `
+                <th style="text-align: center; min-width: 200px;">
+                  <div style="height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+                    <img src="${p.image}" alt="${p.title}" style="max-height: 90px; object-fit: contain;">
+                  </div>
+                  <a href="product.html?id=${p.id}" style="font-size: 14px; font-weight: 800; color: var(--text-primary); text-transform: uppercase;">${p.title}</a>
+                  <button onclick="removeFromCompare('${p.id}')" style="display:block; margin: 6px auto 0 auto; background:none; border:none; color: var(--accent-red); font-size: 11px; cursor:pointer;">Вилучити</button>
+                </th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ціна (₴)</strong></td>
+              ${products.map(p => `<td style="font-weight: 800; color: var(--accent-orange); font-family: var(--font-mono); text-align: center;">${p.price.toLocaleString('uk-UA')} ₴</td>`).join('')}
+            </tr>
+            <tr>
+              <td><strong>Наявність</strong></td>
+              ${products.map(p => `<td style="text-align: center;"><span class="stock-tag ${p.inStock ? 'in-stock' : 'out-stock'}">${p.inStock ? 'В наявності' : 'Під замовлення'}</span></td>`).join('')}
+            </tr>
+            <tr>
+              <td><strong>Бренд / Виробник</strong></td>
+              ${products.map(p => `<td style="text-align: center;">${p.brand || 'N/A'}</td>`).join('')}
+            </tr>
+            <tr>
+              <td><strong>Процесор (CPU)</strong></td>
+              ${products.map(p => `<td style="text-align: center;">${p.processor || 'N/A'}</td>`).join('')}
+            </tr>
+            <tr>
+              <td><strong>Оперативна пам'ять (RAM)</strong></td>
+              ${products.map(p => `<td style="text-align: center;">${p.ram || 'N/A'}</td>`).join('')}
+            </tr>
+            <tr>
+              <td><strong>Відеокарта (GPU)</strong></td>
+              ${products.map(p => `<td style="text-align: center;">${p.gpu || 'N/A'}</td>`).join('')}
+            </tr>
+            <tr>
+              <td><strong>Дія</strong></td>
+              ${products.map(p => `
+                <td style="text-align: center;">
+                  <button class="btn-primary" style="margin: 0 auto; padding: 8px 12px; font-size: 12px;" onclick="CartManager.addToCart('${p.id}')">
+                    🛒 В кошик
+                  </button>
+                </td>
+              `).join('')}
+            </tr>
+          </tbody>
+        </table>
+      `;
+    }
+
+    function removeFromCompare(id) {
+      CompareManager.toggleCompare(id);
+      renderComparison();
+    }
+
+    function clearCompareList() {
+      CompareManager.saveCompareList([]);
+      renderComparison();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Каталог електроніки — FICSIT ELECTRONICS (Rozetka Style)</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Header -->
+  <div id="ficsitHeader"></div>
+
+  <main class="main-content">
+
+    <div class="page-title-bar">
+      <h1 class="page-title" id="catalogTitle">КАТАЛОГ ЕЛЕКТРОНІКИ</h1>
+      <span style="font-size: 14px; color: var(--text-secondary);" id="productCountTag">Знайдено: 0 товарів</span>
+    </div>
+
+    <!-- Rozetka Subcategory Quick Icons Bar (Matching Screenshot 1) -->
+    <div style="display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px; margin-bottom: 24px; scrollbar-width: thin;">
+      
+      <div class="subcat-chip" data-filter-type="" data-filter-val="" onclick="filterBySubcat('')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span style="font-size: 12px; font-weight: 700; white-space: nowrap;">ТОПи Продажів</span>
+      </div>
+
+      <div class="subcat-chip" data-filter-type="brand" data-filter-val="Apple" onclick="filterBySubcat('brand', 'Apple')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        <span style="font-size: 12px; font-weight: 700; white-space: nowrap;">Apple MacBook</span>
+      </div>
+
+      <div class="subcat-chip" data-filter-type="brand" data-filter-val="ASUS" onclick="filterBySubcat('brand', 'ASUS')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><polygon points="6 2 18 2 18 6 6 6"/><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8" cy="12" r="1"/><circle cx="16" cy="12" r="1"/></svg>
+        <span style="font-size: 12px; font-weight: 700; white-space: nowrap;">Ноутбуки ASUS</span>
+      </div>
+
+      <div class="subcat-chip" data-filter-type="brand" data-filter-val="Intel" onclick="filterBySubcat('brand', 'Intel')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+        <span style="font-size: 12px; font-weight: 700; white-space: nowrap;">Процесори Intel</span>
+      </div>
+
+      <div class="subcat-chip" data-filter-type="brand" data-filter-val="AMD" onclick="filterBySubcat('brand', 'AMD')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+        <span style="font-size: 12px; font-weight: 700; white-space: nowrap;">Процесори AMD</span>
+      </div>
+
+      <div class="subcat-chip" data-filter-type="brand" data-filter-val="NVIDIA" onclick="filterBySubcat('brand', 'NVIDIA')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span style="font-size: 12px; font-weight: 700; white-space: nowrap;">Відеокарти RTX</span>
+      </div>
+
+      <div class="subcat-chip" data-filter-type="category" data-filter-val="smartphones" onclick="filterBySubcat('category', 'smartphones')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span style="font-size: 12px; font-weight: 700; white-space: nowrap;">Смартфони iPhone</span>
+      </div>
+
+      <div class="subcat-chip" data-filter-type="category" data-filter-val="monitors" onclick="filterBySubcat('category', 'monitors')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span style="font-size: 12px; font-weight: 700; white-space: nowrap;">Монітори OLED</span>
+      </div>
+
+    </div>
+
+    <div class="catalog-layout">
+
+      <!-- Rozetka Style Filters Sidebar -->
+      <aside class="filter-sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+          <strong style="font-size: 16px; text-transform: uppercase;">Фільтри</strong>
+          <button onclick="resetFilters()" style="background: none; border: none; color: var(--accent-orange); font-size: 12px; font-weight: 700; cursor: pointer;">Скинути все</button>
+        </div>
+
+        <!-- Quick Filter Pills (Screen size / RAM / SSD like Rozetka Screenshot 1) -->
+        <div class="filter-group">
+          <div class="filter-title">Швидкий вибір</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <button class="pill-btn" onclick="togglePillFilter('16 GB')">16 GB</button>
+            <button class="pill-btn" onclick="togglePillFilter('32 GB')">32 GB</button>
+            <button class="pill-btn" onclick="togglePillFilter('64 GB')">64 GB</button>
+            <button class="pill-btn" onclick="togglePillFilter('240Hz')">240 Hz</button>
+          </div>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="filter-group">
+          <div class="filter-title">Ціна (₴)</div>
+          <div class="price-inputs">
+            <input type="number" id="filterPriceMin" class="price-field" placeholder="Від 0" onchange="applyFilters()">
+            <span>—</span>
+            <input type="number" id="filterPriceMax" class="price-field" placeholder="До 200000" onchange="applyFilters()">
+          </div>
+        </div>
+
+        <!-- Availability Filter -->
+        <div class="filter-group">
+          <div class="filter-title">Наявність</div>
+          <label class="checkbox-label">
+            <input type="checkbox" id="filterInStock" onchange="applyFilters()">
+            <span>Тільки в наявності</span>
+          </label>
+        </div>
+
+        <!-- Brand Filter -->
+        <div class="filter-group">
+          <div class="filter-title">Бренд / Виробник</div>
+          <div id="brandCheckboxesList">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Processor Filter -->
+        <div class="filter-group">
+          <div class="filter-title">Процесор (CPU)</div>
+          <div id="processorCheckboxesList">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <button class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="applyFilters()">
+          Застосувати Фільтри
+        </button>
+      </aside>
+
+      <!-- Main Catalog Display -->
+      <section>
+        
+        <!-- Sorting Bar -->
+        <div class="sort-bar">
+          <span style="font-size: 13px; font-weight: 600; color: var(--text-secondary);" id="activeSearchQueryTag">Всі товари</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="sortSelect" style="font-size: 13px; font-weight: 600;">Сортування:</label>
+            <select id="sortSelect" class="sort-select" onchange="applyFilters()">
+              <option value="popular">За рейтингом</option>
+              <option value="price-asc">Ціна: від дешевшого</option>
+              <option value="price-desc">Ціна: від дорожчого</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="products-grid" id="catalogProductsGrid">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Empty Results Message -->
+        <div id="noProductsFound" style="display: none; text-align: center; padding: 60px 20px; background-color: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-top: 20px;">
+          <div style="font-size: 48px; margin-bottom: 12px;">🔍</div>
+          <h3 style="font-size: 18px; text-transform: uppercase;">Товарів не знайдено</h3>
+          <p style="color: var(--text-secondary); margin-top: 6px;">Спробуйте змінити фільтри або пошуковий запит.</p>
+          <button class="btn-secondary" style="margin-top: 16px;" onclick="resetFilters()">Скинути фільтри</button>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Common Footer -->
+  <div id="ficsitFooter"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    let currentCategory = '';
+    let currentSearch = '';
+    let selectedPill = '';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Parse URL Parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      currentCategory = urlParams.get('category') || '';
+      currentSearch = urlParams.get('search') || '';
+
+      renderFicsitHeader(currentCategory || 'catalog');
+      renderFicsitFooter();
+
+      if (currentSearch) {
+        document.getElementById('catalogTitle').textContent = `ПОШУК: "${currentSearch}"`;
+        document.getElementById('activeSearchQueryTag').textContent = `Результати пошуку для "${currentSearch}"`;
+        const searchInput = document.getElementById('globalSearchInput');
+        if (searchInput) searchInput.value = currentSearch;
+      } else if (currentCategory) {
+        const catNames = {
+          laptops: "НОУТБУКИ",
+          components: "ПРОЦЕСОРИ ТА ВІДЕОКАРТИ",
+          smartphones: "СМАРТФОНИ",
+          monitors: "МОНІТОРИ",
+          accessories: "АКСЕСУАРИ"
+        };
+        document.getElementById('catalogTitle').textContent = catNames[currentCategory] || 'КАТАЛОГ';
+      }
+
+      initSidebarFilters();
+      applyFilters();
+    });
+
+    function initSidebarFilters() {
+      const products = DataStore.getProducts();
+
+      // Collect Brands
+      const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
+      const brandContainer = document.getElementById('brandCheckboxesList');
+      brandContainer.innerHTML = brands.map(b => `
+        <label class="checkbox-label">
+          <input type="checkbox" value="${b}" class="brand-filter-cb" onchange="applyFilters()">
+          <span>${b}</span>
+        </label>
+      `).join('');
+
+      // Collect Processors
+      const processors = [...new Set(products.map(p => p.processor).filter(p => p && p !== 'N/A'))];
+      const cpuContainer = document.getElementById('processorCheckboxesList');
+      cpuContainer.innerHTML = processors.map(cpu => `
+        <label class="checkbox-label">
+          <input type="checkbox" value="${cpu}" class="cpu-filter-cb" onchange="applyFilters()">
+          <span>${cpu}</span>
+        </label>
+      `).join('');
+    }
+
+    let activeSubcatType = '';
+    let activeSubcatVal = '';
+
+    function filterBySubcat(type, value = '') {
+      // If clicking the currently active chip or empty, turn it off and reset
+      if (!type || (activeSubcatType === type && activeSubcatVal === value)) {
+        activeSubcatType = '';
+        activeSubcatVal = '';
+        resetFilters();
+        return;
+      }
+
+      // Record active chip
+      activeSubcatType = type;
+      activeSubcatVal = value;
+
+      // Clear all other sidebar inputs & pill buttons
+      document.getElementById('filterPriceMin').value = '';
+      document.getElementById('filterPriceMax').value = '';
+      document.getElementById('filterInStock').checked = false;
+      document.querySelectorAll('.brand-filter-cb').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.cpu-filter-cb').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
+      selectedPill = '';
+      currentSearch = '';
+
+      if (type === 'brand') {
+        currentCategory = ''; // Reset category restriction so all products of this brand show
+        document.querySelectorAll('.brand-filter-cb').forEach(cb => {
+          cb.checked = (cb.value === value);
+        });
+        document.getElementById('catalogTitle').textContent = `БРЕНД: ${value.toUpperCase()}`;
+        document.getElementById('activeSearchQueryTag').textContent = `Товари бренду ${value}`;
+      } else if (type === 'category') {
+        currentCategory = value;
+        const catNames = {
+          laptops: "НОУТБУКИ",
+          components: "ПРОЦЕСОРИ ТА ВІДЕОКАРТИ",
+          smartphones: "СМАРТФОНИ",
+          monitors: "МОНІТОРИ",
+          accessories: "АКСЕСУАРИ"
+        };
+        document.getElementById('catalogTitle').textContent = catNames[value] || 'КАТАЛОГ';
+        document.getElementById('activeSearchQueryTag').textContent = `Категорія: ${catNames[value] || value}`;
+      }
+
+      updateActiveSubcatChips();
+      applyFilters();
+    }
+
+    function updateActiveSubcatChips() {
+      document.querySelectorAll('.subcat-chip').forEach(chip => {
+        const cType = chip.getAttribute('data-filter-type') || '';
+        const cVal = chip.getAttribute('data-filter-val') || '';
+        if (activeSubcatType && cType === activeSubcatType && cVal === activeSubcatVal) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+    }
+
+    function togglePillFilter(val) {
+      if (selectedPill === val) {
+        selectedPill = '';
+      } else {
+        selectedPill = val;
+      }
+      document.querySelectorAll('.pill-btn').forEach(btn => {
+        if (btn.textContent.trim() === val && selectedPill === val) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      applyFilters();
+    }
+
+    function applyFilters() {
+      let products = DataStore.getProducts();
+
+      // Search Filter
+      if (currentSearch) {
+        const query = currentSearch.toLowerCase();
+        products = products.filter(p => 
+          p.title.toLowerCase().includes(query) || 
+          (p.brand && p.brand.toLowerCase().includes(query)) ||
+          (p.processor && p.processor.toLowerCase().includes(query)) ||
+          (p.description && p.description.toLowerCase().includes(query))
+        );
+      }
+
+      // Category Filter
+      if (currentCategory) {
+        products = products.filter(p => p.category === currentCategory);
+      }
+
+      // Pill Filter
+      if (selectedPill) {
+        products = products.filter(p => JSON.stringify(p).includes(selectedPill));
+      }
+
+      // Price Filter
+      const minPrice = parseFloat(document.getElementById('filterPriceMin').value) || 0;
+      const maxPrice = parseFloat(document.getElementById('filterPriceMax').value) || Infinity;
+      products = products.filter(p => p.price >= minPrice && p.price <= maxPrice);
+
+      // In Stock Filter
+      const inStockOnly = document.getElementById('filterInStock').checked;
+      if (inStockOnly) {
+        products = products.filter(p => p.inStock);
+      }
+
+      // Brand Filter
+      const selectedBrands = Array.from(document.querySelectorAll('.brand-filter-cb:checked')).map(cb => cb.value);
+      if (selectedBrands.length > 0) {
+        products = products.filter(p => selectedBrands.includes(p.brand));
+      }
+
+      // CPU Filter
+      const selectedCpus = Array.from(document.querySelectorAll('.cpu-filter-cb:checked')).map(cb => cb.value);
+      if (selectedCpus.length > 0) {
+        products = products.filter(p => selectedCpus.includes(p.processor));
+      }
+
+      // Sorting
+      const sortVal = document.getElementById('sortSelect').value;
+      if (sortVal === 'price-asc') {
+        products.sort((a, b) => a.price - b.price);
+      } else if (sortVal === 'price-desc') {
+        products.sort((a, b) => b.price - a.price);
+      } else if (sortVal === 'popular') {
+        products.sort((a, b) => b.rating - a.rating);
+      }
+
+      // Render Results
+      const grid = document.getElementById('catalogProductsGrid');
+      const noFound = document.getElementById('noProductsFound');
+      const countTag = document.getElementById('productCountTag');
+
+      countTag.textContent = `Знайдено: ${products.length} товарів`;
+
+      if (products.length === 0) {
+        grid.style.display = 'none';
+        noFound.style.display = 'block';
+      } else {
+        grid.style.display = 'grid';
+        noFound.style.display = 'none';
+        grid.innerHTML = products.map((p, idx) => createProductCardHtml(p, idx)).join('');
+      }
+    }
+
+    function resetFilters() {
+      activeSubcatType = '';
+      activeSubcatVal = '';
+      updateActiveSubcatChips();
+      document.getElementById('filterPriceMin').value = '';
+      document.getElementById('filterPriceMax').value = '';
+      document.getElementById('filterInStock').checked = false;
+      document.querySelectorAll('.brand-filter-cb').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.cpu-filter-cb').forEach(cb => cb.checked = false);
+      document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
+      selectedPill = '';
+      document.getElementById('sortSelect').value = 'popular';
+      currentSearch = '';
+      currentCategory = '';
+      history.pushState({}, '', 'catalog.html');
+      document.getElementById('catalogTitle').textContent = 'КАТАЛОГ ЕЛЕКТРОНІКИ';
+      document.getElementById('activeSearchQueryTag').textContent = 'Всі товари';
+      applyFilters();
+    }
+  </script>
+</body>
+</html>

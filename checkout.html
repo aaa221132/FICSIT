@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оформлення замовлення — FICSIT ELECTRONICS</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    #novaPoshtaMapContainer {
+      display: none;
+      margin-top: 16px;
+    }
+    #novaPoshtaMapContainer.visible {
+      display: block;
+    }
+    #novaPoshtaMap {
+      height: 360px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      z-index: 0;
+    }
+    .np-map-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .np-map-hint {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .np-selected-branch {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--accent-orange);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      color: var(--text-primary);
+      display: none;
+    }
+    .np-selected-branch.visible {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Common Header -->
+  <div id="ficsitHeader"></div>
+
+  <main class="main-content">
+
+    <!-- Guest Restriction Screen -->
+    <div id="guestRestrictionView" style="display: none; text-align: center; padding: 70px 20px; background-color: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-top: 20px;">
+      <div style="display: flex; justify-content: center; margin-bottom: 16px; color: var(--accent-orange);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h2 style="font-size: 22px; font-weight: 800; text-transform: uppercase;">Потрібна авторизація</h2>
+      <p style="color: var(--text-secondary); margin-top: 8px; max-width: 500px; margin-left: auto; margin-right: auto;">
+        Оформлення замовлень доступне лише після створення або входу в свій профіль.
+      </p>
+      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+        <a href="profile.html" class="btn-primary" style="padding: 12px 28px; display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Створити профіль / Увійти
+        </a>
+      </div>
+    </div>
+
+    <!-- Registered User Checkout View -->
+    <div id="registeredCheckoutView">
+      <div class="page-title-bar">
+        <h1 class="page-title">ОФОРМЛЕННЯ ЗАМОВЛЕННЯ ТА ОПЛАТА</h1>
+      </div>
+
+      <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
+        <div class="cart-layout">
+          
+          <!-- Form Fields -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            
+            <!-- Step 1: Customer Info -->
+            <div style="background-color: var(--bg-secondary); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+              <h3 style="font-size: 16px; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; color: var(--accent-orange);">1. Контактні дані покупця</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                  <label class="form-label">ПІБ (Прізвище, Ім'я, По батькові)</label>
+                  <input type="text" id="custName" class="form-input" required placeholder="Іван Петренко">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Телефон</label>
+                  <input type="tel" id="custPhone" class="form-input" required placeholder="+380 67 123 45 67">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Пошта (Email)</label>
+                <input type="email" id="custEmail" class="form-input" required placeholder="ivan@gmail.com">
+              </div>
+            </div>
+
+            <!-- Step 2: Delivery Selection -->
+            <div style="background-color: var(--bg-secondary); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+              <h3 style="font-size: 16px; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; color: var(--accent-orange);">2. Вибір способу доставки</h3>
+              
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <label class="checkbox-label" style="background-color: var(--bg-card); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                  <input type="radio" name="deliveryMethod" value="Кур'єр Нова Пошта (Адресна)" checked>
+                  <div>
+                    <strong style="color: var(--text-primary);">Кур'єр Нова Пошта / Адресна доставка</strong>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Швидка доставка до дверей або у відділення.</div>
+                  </div>
+                </label>
+
+                <label class="checkbox-label" style="background-color: var(--bg-card); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                  <input type="radio" name="deliveryMethod" value="Самовивіз з точки видачі">
+                  <div>
+                    <strong style="color: var(--text-primary);">Самовивіз з точки видачі FICSIT</strong>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Безкоштовно з найближчого магазину електроніки.</div>
+                  </div>
+                </label>
+              </div>
+
+              <div class="form-group" style="margin-top: 16px;">
+                <label class="form-label">Адреса доставки / Номер відділення Нової Пошти</label>
+                <input type="text" id="custAddress" class="form-input" required placeholder="м. Київ, Відділення Нової Пошти №1">
+              </div>
+            </div>
+
+            <!-- Step 3: Payment Selection & Dynamic Card Form -->
+            <div style="background-color: var(--bg-secondary); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+              <h3 style="font-size: 16px; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; color: var(--accent-orange);">3. Спосіб оплати</h3>
+              
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <label class="checkbox-label" style="background-color: var(--bg-card); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);" onclick="handlePaymentChange('card')">
+                  <input type="radio" name="paymentMethod" value="Оплата карткою Visa/Mastercard (Онлайн)" id="payCardRadio" checked onchange="handlePaymentChange('card')">
+                  <div style="width: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <strong style="color: var(--text-primary);">Оплата карткою Visa / Mastercard (Онлайн)</strong>
+                      <span style="font-size: 11px; background: #059669; color: #fff; padding: 2px 8px; border-radius: 4px; font-weight: 800;">МИТТЄВО</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Безпечна оплата банківською карткою на сайті через 3D-Secure.</div>
+                  </div>
+                </label>
+
+                <!-- DYNAMIC CREDIT CARD DETAILS FORM (Displayed when Card Payment is selected) -->
+                <div id="cardDetailsContainer" class="card-payment-box">
+                  
+                  <div class="card-preview-mini">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div class="card-preview-chip"></div>
+                      <span style="font-size: 14px; font-weight: 900; letter-spacing: 1px;">VISA / MASTERCARD</span>
+                    </div>
+                    <div class="card-preview-number" id="cardPreviewNumber">•••• •••• •••• ••••</div>
+                    <div class="card-preview-footer">
+                      <div>
+                        <span style="font-size: 8px; display: block; opacity: 0.8;">ВЛАСНИК</span>
+                        <strong id="cardPreviewHolder">CARDHOLDER NAME</strong>
+                      </div>
+                      <div>
+                        <span style="font-size: 8px; display: block; opacity: 0.8;">ТЕРМІН</span>
+                        <strong id="cardPreviewExpiry">MM/YY</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Номер банківської картки</label>
+                    <input type="text" id="cardNumber" class="form-input" placeholder="4441 •••• •••• ••••" maxlength="19" oninput="formatCardNumber(this)">
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 12px;">
+                    <div class="form-group">
+                      <label class="form-label">Термін (ММ/РР)</label>
+                      <input type="text" id="cardExpiry" class="form-input" placeholder="12/28" maxlength="5" oninput="formatCardExpiry(this)">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">CVV / CVC</label>
+                      <input type="password" id="cardCvv" class="form-input" placeholder="•••" maxlength="3" oninput="this.value=this.value.replace(/\D/g,'')">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Ім'я на картці</label>
+                      <input type="text" id="cardHolder" class="form-input" placeholder="IVAN PETRENKO" oninput="updateCardHolder(this)">
+                    </div>
+                  </div>
+                  <small style="color: #10b981; font-size: 11px; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                    🔒 Захищене 256-бітне шифрування банківської транзакції
+                  </small>
+                </div>
+
+                <label class="checkbox-label" style="background-color: var(--bg-card); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);" onclick="handlePaymentChange('cash')">
+                  <input type="radio" name="paymentMethod" value="Оплата при отриманні (Накладений платіж)" id="payCashRadio" onchange="handlePaymentChange('cash')">
+                  <div>
+                    <strong style="color: var(--text-primary);">💵 Оплата при отриманні (Накладений платіж)</strong>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Оплата готівкою або карткою після огляду товару при отриманні.</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Order Summary Side Panel -->
+          <aside class="cart-summary-box">
+            <h3 style="font-size: 16px; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">Ваше замовлення</h3>
+            
+            <div id="checkoutItemsBrief" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; max-height: 280px; overflow-y: auto;">
+              <!-- Rendered list of products -->
+            </div>
+
+            <div class="summary-row" style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-color);">
+              <span>Товари:</span>
+              <strong id="checkoutSubtotal">0 ₴</strong>
+            </div>
+            <div class="summary-row">
+              <span>Доставка:</span>
+              <strong style="color: var(--accent-cyan);">Безкоштовно</strong>
+            </div>
+
+            <div class="summary-total summary-row" style="margin-top: 8px;">
+              <span>До сплати:</span>
+              <span style="color: var(--accent-orange);" id="checkoutGrandTotal">0 ₴</span>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px; padding: 14px; text-align: center; font-size: 15px;">
+              ✅ Підтвердити Замовлення
+            </button>
+          </aside>
+
+        </div>
+      </form>
+    </div>
+
+  </main>
+
+  <!-- Common Footer -->
+  <div id="ficsitFooter"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFicsitHeader('cart');
+      renderFicsitFooter();
+
+      if (!AuthManager.isLoggedIn()) {
+        document.getElementById('guestRestrictionView').style.display = 'block';
+        document.getElementById('registeredCheckoutView').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('guestRestrictionView').style.display = 'none';
+      document.getElementById('registeredCheckoutView').style.display = 'block';
+
+      const items = CartManager.getCartDetailed();
+      if (items.length === 0) {
+        window.location.href = 'cart.html';
+        return;
+      }
+
+      const user = AuthManager.getCurrentUser();
+      if (user) {
+        document.getElementById('custName').value = user.name || '';
+        document.getElementById('custPhone').value = user.phone || '';
+        document.getElementById('custEmail').value = user.email || '';
+      }
+
+      const briefContainer = document.getElementById('checkoutItemsBrief');
+      briefContainer.innerHTML = items.map(item => `
+        <div style="display:flex; align-items:center; gap: 10px; font-size:12px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+          <img src="${item.image}" alt="${item.title}" style="width: 38px; height: 38px; object-fit: contain; background: #fff; border-radius: 4px; padding: 2px; flex-shrink: 0;">
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${item.title}">${item.title}</div>
+            <div style="color:var(--text-secondary); font-size: 11px;">${item.qty} шт. × ${item.price.toLocaleString('uk-UA')} ₴</div>
+          </div>
+          <strong style="font-family: var(--font-mono); font-size: 13px; color: var(--accent-orange);">${(item.price * item.qty).toLocaleString('uk-UA')} ₴</strong>
+        </div>
+      `).join('');
+
+      const total = CartManager.getTotalPrice();
+      document.getElementById('checkoutSubtotal').textContent = `${total.toLocaleString('uk-UA')} ₴`;
+      document.getElementById('checkoutGrandTotal').textContent = `${total.toLocaleString('uk-UA')} ₴`;
+    });
+
+    /* Card Payment Display Controls */
+    function handlePaymentChange(type) {
+      const container = document.getElementById('cardDetailsContainer');
+      if (type === 'card') {
+        container.style.display = 'block';
+      } else {
+        container.style.display = 'none';
+      }
+    }
+
+    function formatCardNumber(input) {
+      let value = input.value.replace(/\D/g, '').substring(0, 16);
+      let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+      input.value = formatted;
+      document.getElementById('cardPreviewNumber').textContent = formatted || '•••• •••• •••• ••••';
+    }
+
+    function formatCardExpiry(input) {
+      let value = input.value.replace(/\D/g, '').substring(0, 4);
+      if (value.length >= 2) {
+        input.value = value.substring(0, 2) + '/' + value.substring(2);
+      } else {
+        input.value = value;
+      }
+      document.getElementById('cardPreviewExpiry').textContent = input.value || 'MM/YY';
+    }
+
+    function updateCardHolder(input) {
+      input.value = input.value.toUpperCase();
+      document.getElementById('cardPreviewHolder').textContent = input.value || 'CARDHOLDER NAME';
+    }
+
+    function handlePlaceOrder(event) {
+      event.preventDefault();
+
+      if (!AuthManager.isLoggedIn()) {
+        AuthManager.requireAuth("оформляти замовлення");
+        return;
+      }
+
+      const items = CartManager.getCartDetailed();
+      const totalPrice = CartManager.getTotalPrice();
+
+      const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+      const address = document.getElementById('custAddress').value.trim();
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const email = document.getElementById('custEmail').value.trim();
+
+      let paymentCardMasked = '';
+      let paymentStatus = '⏳ Очікує оплати при отриманні';
+
+      // If card payment is selected, validate card details
+      if (paymentMethod.includes('карткою')) {
+        const cardNum = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        const cardExp = document.getElementById('cardExpiry').value.trim();
+        const cardCvv = document.getElementById('cardCvv').value.trim();
+
+        if (cardNum.length < 16) {
+          alert('Будь ласка, введіть коректний 16-значний номер банківської картки.');
+          document.getElementById('cardNumber').focus();
+          return;
+        }
+        if (cardExp.length < 5) {
+          alert('Будь ласка, введіть термін дії картки у форматі ММ/РР.');
+          document.getElementById('cardExpiry').focus();
+          return;
+        }
+        if (cardCvv.length < 3) {
+          alert('Будь ласка, введіть 3-значний код CVV/CVC.');
+          document.getElementById('cardCvv').focus();
+          return;
+        }
+
+        paymentCardMasked = '•••• ' + cardNum.slice(-4);
+        paymentStatus = '✅ Оплачено онлайн (Visa/Mastercard)';
+      }
+
+      // Generate realistic TTN Tracking number
+      const randomTtn = '2045 ' + Math.floor(1000 + Math.random() * 9000) + ' ' + Math.floor(1000 + Math.random() * 9000);
+
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('uk-UA') + ' ' + now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+
+      const newOrder = {
+        id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+        date: formattedDate,
+        total: totalPrice,
+        status: "В обробці",
+        delivery: deliveryMethod,
+        payment: paymentMethod,
+        paymentCardMasked: paymentCardMasked,
+        paymentStatus: paymentStatus,
+        address: address,
+        customerName: name,
+        customerPhone: phone,
+        customerEmail: email,
+        ttn: randomTtn,
+        items: items.map(i => ({ 
+          id: i.id, 
+          title: i.title, 
+          price: i.price, 
+          qty: i.qty,
+          image: i.image,
+          brand: i.brand,
+          category: i.category
+        }))
+      };
+
+      DataStore.addOrder(newOrder);
+      CartManager.clearCart();
+
+      if (window.showToast) {
+        window.showToast(`Замовлення #${newOrder.id} успішно створено!`);
+      }
+
+      setTimeout(() => {
+        window.location.href = 'orders.html';
+      }, 800);
+    }
+  </script>
+</body>
+</html>

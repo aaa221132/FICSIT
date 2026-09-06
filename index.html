@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FICSIT ELECTRONICS — Магазин Електроніки</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Header -->
+  <div id="ficsitHeader"></div>
+
+  <main class="main-content">
+    
+    <!-- Hero Banner -->
+    <div class="hero-banner" style="background: linear-gradient(135deg, #27272a, #18181b); border: 1px solid var(--border-color); border-left: 6px solid var(--accent-orange); border-radius: var(--radius-lg); padding: 32px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; gap: 24px; box-shadow: var(--shadow-lg);">
+      <div style="max-width: 650px;">
+        <span style="color: var(--accent-orange); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 13px;">Флагманська Електроніка 2026</span>
+        <h1 style="font-size: 32px; font-weight: 900; text-transform: uppercase; margin: 8px 0 12px 0; line-height: 1.1;">Магазин Сучасної Комп'ютерної Техніки</h1>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+          Купуйте топові ноутбуки Apple MacBook, ASUS ROG, процесори Intel Core i9 та AMD Ryzen, відеокарти RTX 4090, смартфони iPhone 15 Pro Max та монітори з офіційною гарантією.
+        </p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="catalog.html" class="btn-primary" style="padding: 10px 20px; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            <span>Відкрити Каталог Товарів</span>
+          </a>
+          <a href="compare.html" class="btn-secondary" style="padding: 10px 18px; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+            <span>Порівняння Товарів</span>
+          </a>
+        </div>
+      </div>
+      <div style="text-align: center; background: rgba(244, 122, 32, 0.08); padding: 20px 24px; border-radius: var(--radius-md); border: 1px dashed var(--accent-orange);">
+        <div style="display: flex; justify-content: center; margin-bottom: 4px; color: var(--accent-orange);">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <strong style="display: block; font-size: 15px; margin-top: 4px; color: var(--accent-orange);">ОФІЦІЙНА ГАРАНТІЯ</strong>
+        <span style="font-size: 12px; color: var(--text-secondary);">Швидка доставка по Україні</span>
+      </div>
+    </div>
+
+    <!-- Compact Hot Offers Section -->
+    <div class="page-title-bar" style="margin-bottom: 16px;">
+      <h2 class="page-title" style="font-size: 20px;">ТОП ПРОДАЖІВ ТА ГАРЯЧІ НОВИНКИ</h2>
+      <a href="catalog.html" style="color: var(--accent-orange); font-size: 13px; font-weight: 700;">Переглянути всі &rarr;</a>
+    </div>
+
+    <div class="products-grid" id="hotOffersGrid" style="gap: 16px; margin-bottom: 32px;">
+      <!-- Dynamically filled -->
+    </div>
+
+    <!-- Category Shortcuts -->
+    <div class="section-divider" style="margin: 24px 0 16px 0;">КАТЕГОРІЇ ЕЛЕКТРОНІКИ</div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 32px;">
+      <a href="catalog.html?category=laptops" class="btn-secondary" style="text-align: center; padding: 18px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        <strong style="font-size: 13px; text-transform: uppercase;">Ноутбуки</strong>
+      </a>
+      <a href="catalog.html?category=components" class="btn-secondary" style="text-align: center; padding: 18px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/></svg>
+        <strong style="font-size: 13px; text-transform: uppercase;">Процесори та ВК</strong>
+      </a>
+      <a href="catalog.html?category=smartphones" class="btn-secondary" style="text-align: center; padding: 18px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <strong style="font-size: 13px; text-transform: uppercase;">Смартфони</strong>
+      </a>
+      <a href="catalog.html?category=monitors" class="btn-secondary" style="text-align: center; padding: 18px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <strong style="font-size: 13px; text-transform: uppercase;">Монітори</strong>
+      </a>
+      <a href="catalog.html?category=accessories" class="btn-secondary" style="text-align: center; padding: 18px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-orange);"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6.01" y2="8"/><line x1="10" y1="8" x2="10.01" y2="8"/><line x1="14" y1="8" x2="14.01" y2="8"/><line x1="18" y1="8" x2="18.01" y2="8"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+        <strong style="font-size: 13px; text-transform: uppercase;">Аксесуари</strong>
+      </a>
+    </div>
+
+    <!-- Recently Viewed Section -->
+    <div class="page-title-bar" style="margin-bottom: 16px;">
+      <h2 class="page-title" style="font-size: 20px;">ВЖЕ ПЕРЕГЛЯНУТІ ТОВАРИ</h2>
+    </div>
+
+    <div id="recentlyViewedSection">
+      <!-- Dynamically rendered -->
+    </div>
+
+  </main>
+
+  <!-- Common Footer -->
+  <div id="ficsitFooter"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFicsitHeader('home');
+      renderFicsitFooter();
+
+      // Render Hot Offers
+      const products = DataStore.getProducts();
+      const hotOffersGrid = document.getElementById('hotOffersGrid');
+      hotOffersGrid.innerHTML = products.slice(0, 4).map((p, idx) => createProductCardHtml(p, idx)).join('');
+
+      // Render Recently Viewed Products
+      const recentlyViewed = DataStore.getRecentlyViewed();
+      const recentlyViewedContainer = document.getElementById('recentlyViewedSection');
+      if (recentlyViewed.length === 0) {
+        recentlyViewedContainer.innerHTML = `
+          <div style="background-color: var(--bg-secondary); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px;">
+            Ви ще не переглядали товари. Перейдіть у каталог та відкрийте картку товару!
+          </div>
+        `;
+      } else {
+        recentlyViewedContainer.innerHTML = `
+          <div class="products-grid" style="gap: 16px;">
+            ${recentlyViewed.map((p, idx) => createProductCardHtml(p, idx)).join('')}
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

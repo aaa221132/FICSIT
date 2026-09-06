@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мої Замовлення — FICSIT ELECTRONICS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Header -->
+  <div id="ficsitHeader"></div>
+
+  <main class="main-content">
+
+    <!-- Guest Restriction Screen -->
+    <div id="guestRestrictionView" style="display: none; text-align: center; padding: 70px 20px; background-color: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-top: 20px;">
+      <div style="display: flex; justify-content: center; margin-bottom: 16px; color: var(--accent-orange);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h2 style="font-size: 22px; font-weight: 800; text-transform: uppercase;">Історія замовлень недоступна</h2>
+      <p style="color: var(--text-secondary); margin-top: 8px; max-width: 500px; margin-left: auto; margin-right: auto;">
+        Щоб переглядати свої замовлення, будь ласка, увійдіть у свій профіль або зареєструйтесь!
+      </p>
+      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+        <a href="profile.html" class="btn-primary" style="padding: 12px 28px; display: inline-flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Створити профіль / Увійти
+        </a>
+      </div>
+    </div>
+
+    <!-- Registered User Orders View -->
+    <div id="registeredOrdersView">
+      <div class="page-title-bar">
+        <h1 class="page-title">ІСТОРІЯ МОЇХ ЗАМОВЛЕНЬ</h1>
+        <a href="catalog.html" class="btn-secondary" style="font-size: 13px; padding: 8px 16px;">
+          + До каталогу товарів
+        </a>
+      </div>
+
+      <!-- Orders List Container -->
+      <div id="ordersListContainer" style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- Dynamically rendered -->
+      </div>
+
+      <!-- Empty Orders Screen -->
+      <div id="emptyOrdersView" style="display: none; text-align: center; padding: 60px 20px; background-color: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+        <div style="display: flex; justify-content: center; margin-bottom: 12px; color: var(--text-muted);">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </div>
+        <h3 style="font-size: 18px; text-transform: uppercase;">У вас ще немає створених замовлень</h3>
+        <p style="color: var(--text-secondary); margin-top: 6px;">Зробіть своє перше замовлення в нашому магазині електроніки!</p>
+        <a href="catalog.html" class="btn-primary" style="display: inline-block; margin-top: 16px;">Перейти до каталогу</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Electronic Receipt Modal -->
+  <div class="modal-overlay" id="receiptModal">
+    <div class="receipt-modal-box" id="receiptContent">
+      <!-- Dynamically rendered receipt -->
+    </div>
+  </div>
+
+  <!-- Common Footer -->
+  <div id="ficsitFooter"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFicsitHeader('orders');
+      renderFicsitFooter();
+
+      if (!AuthManager.isLoggedIn()) {
+        document.getElementById('guestRestrictionView').style.display = 'block';
+        document.getElementById('registeredOrdersView').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('guestRestrictionView').style.display = 'none';
+      document.getElementById('registeredOrdersView').style.display = 'block';
+
+      renderOrders();
+    });
+
+    function renderOrders() {
+      const orders = DataStore.getOrders();
+      const container = document.getElementById('ordersListContainer');
+      const emptyView = document.getElementById('emptyOrdersView');
+
+      if (orders.length === 0) {
+        container.style.display = 'none';
+        emptyView.style.display = 'block';
+        return;
+      }
+
+      container.style.display = 'flex';
+      emptyView.style.display = 'none';
+
+      container.innerHTML = orders.map(order => {
+        const items = order.items || [];
+        const isPaidOnline = order.payment && order.payment.includes('карткою');
+        
+        return `
+          <div class="order-card-enhanced">
+            
+            <!-- Order Header Bar -->
+            <div class="order-header-bar">
+              <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <div>
+                  <span style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: 700;">Номер замовлення</span>
+                  <div style="font-size: 16px; font-weight: 900; color: var(--accent-orange); font-family: var(--font-mono);">
+                    #${order.id}
+                  </div>
+                </div>
+                <div style="border-left: 1px solid var(--border-color); padding-left: 16px;">
+                  <span style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: 700;">Дата оформлення</span>
+                  <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">${order.date}</div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="stock-tag in-stock" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 800; padding: 6px 12px; font-size: 12px;">
+                  ${order.status === 'В обробці' ? '⏳ В обробці' : (order.status || '✅ Оброблено')}
+                </span>
+                <span style="font-size: 18px; font-weight: 900; color: var(--text-primary); font-family: var(--font-mono);">
+                  ${order.total.toLocaleString('uk-UA')} ₴
+                </span>
+              </div>
+            </div>
+
+            <!-- Order Details Grid -->
+            <div class="order-details-grid">
+              
+              <!-- Left Column: Clickable Ordered Products List -->
+              <div>
+                <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 10px; display: flex; justify-content: space-between;">
+                  <span>Товари у замовленні (${items.length} поз.)</span>
+                  <span style="color: var(--accent-cyan);">Клікніть для перегляду товару ↗</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${items.map(item => `
+                    <a href="product.html?id=${item.id}" class="order-item-clickable" title="Перейти на сторінку товару: ${item.title}">
+                      <img src="${item.image || createRealTechSvg('laptop', '#f47a20')}" alt="${item.title}" class="order-item-img">
+                      
+                      <div style="flex: 1; min-width: 0;">
+                        <div class="order-item-title">${item.title}</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+                          ${item.brand ? `Бренд: <strong>${item.brand}</strong> &nbsp;|&nbsp; ` : ''}
+                          Кількість: <strong>${item.qty} шт.</strong>
+                        </div>
+                      </div>
+
+                      <div style="text-align: right; flex-shrink: 0;">
+                        <div style="font-size: 14px; font-weight: 800; color: var(--accent-orange); font-family: var(--font-mono);">
+                          ${(item.price * item.qty).toLocaleString('uk-UA')} ₴
+                        </div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">
+                          ${item.price.toLocaleString('uk-UA')} ₴ / шт.
+                        </div>
+                      </div>
+                    </a>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Right Column: Delivery, Payment & Tracking Info -->
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                
+                <!-- Delivery Info Card -->
+                <div class="order-info-block">
+                  <div class="order-info-label">🚚 Доставка та Отримувач</div>
+                  <div style="font-weight: 700; color: var(--text-primary);">${order.delivery || 'Кур\'єр Нова Пошта'}</div>
+                  <div style="color: var(--text-secondary);">${order.address || 'Адреса не вказана'}</div>
+                  <div style="font-size: 12px; margin-top: 4px; border-top: 1px dashed var(--border-color); padding-top: 4px;">
+                    <strong>Отримувач:</strong> ${order.customerName || 'Покупець'} ${order.customerPhone ? `(${order.customerPhone})` : ''}
+                  </div>
+                  ${order.ttn ? `
+                    <div style="margin-top: 4px; background: rgba(244, 122, 32, 0.1); padding: 4px 8px; border-radius: 4px; border: 1px dashed var(--accent-orange); font-size: 11px;">
+                      <strong>Номер ТТН для відстеження:</strong> <code style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-orange);">${order.ttn}</code>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- Payment Info Card -->
+                <div class="order-info-block">
+                  <div class="order-info-label">💳 Інформація про оплату</div>
+                  <div style="font-weight: 700; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+                    <span>${order.payment || 'Оплата при отриманні'}</span>
+                  </div>
+                  <div style="font-size: 12px; color: ${isPaidOnline ? '#10b981' : 'var(--accent-orange)'}; font-weight: 700;">
+                    ${order.paymentStatus || (isPaidOnline ? '✅ Оплачено онлайн' : '⏳ Очікує оплати при отриманні')}
+                    ${order.paymentCardMasked ? ` (${order.paymentCardMasked})` : ''}
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                  <button class="btn-secondary" style="flex: 1; padding: 10px; font-size: 12px; font-weight: 700;" onclick="repeatOrder('${order.id}')">
+                    🔄 Повторити замовлення
+                  </button>
+                  <button class="btn-secondary" style="flex: 1; padding: 10px; font-size: 12px; font-weight: 700;" onclick="openReceiptModal('${order.id}')">
+                    🧾 Електронний чек
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function repeatOrder(orderId) {
+      const orders = DataStore.getOrders();
+      const order = orders.find(o => o.id === orderId);
+      if (!order || !order.items) return;
+
+      order.items.forEach(item => {
+        CartManager.addToCart(item.id, item.qty);
+      });
+
+      if (window.showToast) {
+        window.showToast('Товари з замовлення додано в кошик!');
+      }
+
+      setTimeout(() => {
+        window.location.href = 'cart.html';
+      }, 500);
+    }
+
+    function openReceiptModal(orderId) {
+      const orders = DataStore.getOrders();
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const items = order.items || [];
+      const receiptContent = document.getElementById('receiptContent');
+
+      receiptContent.innerHTML = `
+        <div style="text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
+          <h2 style="font-size: 20px; font-weight: 900; text-transform: uppercase; margin: 0; color: #0f172a;">FICSIT ELECTRONICS</h2>
+          <div style="font-size: 12px; color: #64748b; margin-top: 4px;">ТОВ "ФІКСІТ ЕЛЕКТРОНІКС ЮКРЕЙН"</div>
+          <div style="font-size: 11px; color: #64748b;">ЄДРПОУ: 44928103 | ПН: 449281026554</div>
+          <div style="font-size: 13px; font-weight: 800; margin-top: 10px; color: #059669; text-transform: uppercase;">
+            ФІСКАЛЬНИЙ ЕЛЕКТРОННИЙ ЧЕК
+          </div>
+        </div>
+
+        <div style="font-size: 12px; display: flex; justify-content: space-between; margin-bottom: 12px; color: #334155;">
+          <div>Чек: <strong>#${order.id}</strong></div>
+          <div>Дата: <strong>${order.date}</strong></div>
+        </div>
+
+        <div style="font-size: 12px; color: #334155; margin-bottom: 12px; background: #f8fafc; padding: 8px 12px; border-radius: 6px;">
+          <div><strong>Покупець:</strong> ${order.customerName || 'Клієнт'}</div>
+          <div><strong>Оплата:</strong> ${order.payment || 'Оплата при отриманні'} ${order.paymentCardMasked ? `(${order.paymentCardMasked})` : ''}</div>
+          <div><strong>Доставка:</strong> ${order.delivery || 'Нова Пошта'} (${order.address || ''})</div>
+        </div>
+
+        <div style="border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 12px 0; margin-bottom: 12px;">
+          <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; display: flex; justify-content: space-between;">
+            <span>Назва товару</span>
+            <span>Сума</span>
+          </div>
+          ${items.map(item => `
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #0f172a;">
+              <div style="max-width: 70%;">
+                <div><strong>${item.title}</strong></div>
+                <div style="font-size: 11px; color: #64748b;">${item.qty} шт. × ${item.price.toLocaleString('uk-UA')} ₴</div>
+              </div>
+              <div style="font-weight: 800; font-family: monospace; font-size: 13px;">
+                ${(item.price * item.qty).toLocaleString('uk-UA')} ₴
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; margin-bottom: 20px; color: #0f172a;">
+          <span>СУМА ДО СПЛАТИ (з ПДВ 20%):</span>
+          <span style="color: #059669; font-family: monospace;">${order.total.toLocaleString('uk-UA')} ₴</span>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-secondary" style="flex: 1; padding: 10px; background: #f1f5f9; color: #0f172a; border-color: #cbd5e1;" onclick="closeReceiptModal()">
+            Закрити
+          </button>
+          <button class="btn-primary" style="flex: 1; padding: 10px; background: #059669; color: #fff;" onclick="window.print()">
+            🖨️ Друкувати чек
+          </button>
+        </div>
+      `;
+
+      document.getElementById('receiptModal').classList.add('active');
+    }
+
+    function closeReceiptModal() {
+      document.getElementById('receiptModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

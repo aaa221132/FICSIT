@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Особистий кабінет — FICSIT ELECTRONICS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Common Header -->
+  <div id="ficsitHeader"></div>
+
+  <main class="main-content">
+
+    <div class="page-title-bar">
+      <h1 class="page-title">👤 ОСОБИСТИЙ КАБІНЕТ</h1>
+    </div>
+
+    <div id="profileContainer">
+      <!-- Dynamically rendered -->
+    </div>
+
+  </main>
+
+  <!-- Common Footer -->
+  <div id="ficsitFooter"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    let activeAuthTab = 'login';
+
+    /* ── Profile Settings Storage (per-user) ─────────────── */
+    function getProfileKey() {
+      const u = AuthManager.getCurrentUser();
+      return u ? `profile_settings_${u.id}` : null;
+    }
+
+    function loadProfileSettings() {
+      const key = getProfileKey();
+      if (!key) return {};
+      try {
+        return JSON.parse(localStorage.getItem(key) || '{}');
+      } catch { return {}; }
+    }
+
+    function saveProfileSettings(patch) {
+      const key = getProfileKey();
+      if (!key) return;
+      const current = loadProfileSettings();
+      const updated = { ...current, ...patch };
+      localStorage.setItem(key, JSON.stringify(updated));
+    }
+
+    /* ── Accordion Toggle ─────────────────────────────────── */
+    function toggleAccordion(el) {
+      el.classList.toggle('active');
+    }
+
+    /* ── Save Handlers ────────────────────────────────────── */
+    function saveMainInfo(event) {
+      event.preventDefault();
+      const name  = document.getElementById('accFullName').value.trim();
+      const phone = document.getElementById('accPhone').value.trim();
+      const email = document.getElementById('accEmail2').value.trim();
+      AuthManager.updateUserProfile(name, phone, email);
+      renderFicsitHeader('profile');
+      renderProfileView();
+    }
+
+    function savePersonalData(event) {
+      event.preventDefault();
+      saveProfileSettings({
+        language: document.getElementById('pdLang').value,
+        gender:   document.getElementById('pdGender').value,
+        birthday: document.getElementById('pdBirthday').value
+      });
+      showSavedToast();
+    }
+
+    function saveContacts(event) {
+      event.preventDefault();
+      saveProfileSettings({
+        messenger: document.getElementById('ctMessenger').value.trim()
+      });
+      showSavedToast();
+    }
+
+    function saveAddress(event) {
+      event.preventDefault();
+      saveProfileSettings({
+        address: document.getElementById('addrMain').value.trim()
+      });
+      showSavedToast();
+    }
+
+    function saveHobbies(event) {
+      event.preventDefault();
+      saveProfileSettings({
+        hobbyGaming:    document.getElementById('hbGaming').checked,
+        hobbyComputers: document.getElementById('hbComputers').checked,
+        hobbyPhones:    document.getElementById('hbPhones').checked
+      });
+      showSavedToast();
+    }
+
+    function savePets(event) {
+      event.preventDefault();
+      saveProfileSettings({
+        petDog: document.getElementById('petDog').checked,
+        petCat: document.getElementById('petCat').checked
+      });
+      showSavedToast();
+    }
+
+    function saveExtra(event) {
+      event.preventDefault();
+      saveProfileSettings({
+        noReceipts: document.getElementById('noReceipts').checked
+      });
+      showSavedToast();
+    }
+
+    function showSavedToast() {
+      if (window.showToast) window.showToast('✅ Зміни успішно збережено!');
+    }
+
+    /* ── Auth Handlers ────────────────────────────────────── */
+    function switchAuthTab(tab) {
+      activeAuthTab = tab;
+      renderProfileView();
+    }
+
+    function handleUserLoginSubmit(event) {
+      event.preventDefault();
+      const res = AuthManager.loginUser(
+        document.getElementById('loginEmail').value,
+        document.getElementById('loginPassword').value
+      );
+      if (res.success) { renderFicsitHeader('profile'); renderProfileView(); }
+    }
+
+    function handleQuickAdminLogin(num) {
+      AuthManager.quickAdminLogin(num);
+      renderFicsitHeader('profile');
+      renderProfileView();
+    }
+
+    function handleUserRegisterSubmit(event) {
+      event.preventDefault();
+      const res = AuthManager.registerUser(
+        document.getElementById('regName').value,
+        document.getElementById('regEmail').value,
+        document.getElementById('regPassword').value,
+        document.getElementById('regPhone').value
+      );
+      if (res.success) { renderFicsitHeader('profile'); renderProfileView(); }
+    }
+
+    /* ── Main Render ──────────────────────────────────────── */
+    function renderProfileView() {
+      const user      = AuthManager.getCurrentUser();
+      const container = document.getElementById('profileContainer');
+      const isAdmin   = AuthManager.isAdmin();
+
+      if (!user) {
+        /* ── Guest: Login / Register with Fast Admin Login Buttons ── */
+        container.innerHTML = `
+          <div style="max-width:550px;margin:20px auto;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-lg);">
+
+            <div style="display:flex;gap:12px;margin-bottom:24px;border-bottom:1px solid var(--border-color);padding-bottom:16px;">
+              <button class="btn-secondary" style="flex:1;${activeAuthTab==='login'?'border-color:var(--accent-orange);color:var(--accent-orange);font-weight:800;':''}" onclick="switchAuthTab('login')">Вхід</button>
+              <button class="btn-secondary" style="flex:1;${activeAuthTab==='register'?'border-color:var(--accent-orange);color:var(--accent-orange);font-weight:800;':''}" onclick="switchAuthTab('register')">Реєстрація</button>
+            </div>
+
+            ${activeAuthTab === 'login' ? `
+              <h2 style="font-size:18px;font-weight:800;text-transform:uppercase;margin-bottom:16px;text-align:center;color:var(--accent-orange);">Вхід в акаунт</h2>
+              <form onsubmit="handleUserLoginSubmit(event)">
+                <div class="form-group"><label class="form-label">Пошта</label><input type="email" id="loginEmail" class="form-input" required placeholder="example@mail.com"></div>
+                <div class="form-group"><label class="form-label">Пароль</label><input type="password" id="loginPassword" class="form-input" required placeholder="••••••••"></div>
+                <button type="submit" class="btn-primary" style="width:100%;padding:12px;font-size:15px;">Увійти в систему</button>
+              </form>
+            ` : `
+              <h2 style="font-size:18px;font-weight:800;text-transform:uppercase;margin-bottom:16px;text-align:center;color:var(--accent-orange);">Створити свій профіль</h2>
+              <form onsubmit="handleUserRegisterSubmit(event)">
+                <div class="form-group"><label class="form-label">ПІБ</label><input type="text" id="regName" class="form-input" required placeholder="ПІБ"></div>
+                <div class="form-group"><label class="form-label">Телефон</label><input type="tel" id="regPhone" class="form-input" required placeholder="+380"></div>
+                <div class="form-group"><label class="form-label">Пошта</label><input type="email" id="regEmail" class="form-input" required placeholder="Пошта"></div>
+                <div class="form-group"><label class="form-label">Пароль</label><input type="password" id="regPassword" class="form-input" required placeholder="••••••••"></div>
+                <button type="submit" class="btn-primary" style="width:100%;padding:12px;font-size:15px;">Зареєструватися</button>
+              </form>
+            `}
+          </div>`;
+        return;
+      }
+
+      /* ── Logged-in User: Rozetka Accordion Cabinet with Prominent Admin Banner ── */
+      const s = loadProfileSettings();
+
+      container.innerHTML = `
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;">
+
+          <!-- Accordions -->
+          <div class="profile-accordion-list">
+
+            <!-- 1. Мій акаунт -->
+            <div class="profile-accordion-item active" onclick="toggleAccordion(this)">
+              <div class="profile-accordion-header">
+                <div>
+                  <h4>Мій акаунт</h4>
+                  <div class="acc-preview">${user.name}&nbsp;&nbsp;${user.phone || ''} (логін)</div>
+                </div>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="profile-accordion-body" onclick="event.stopPropagation()">
+                <form onsubmit="saveMainInfo(event)">
+                  <div class="form-group">
+                    <label class="form-label">ПІБ (Прізвище, Ім'я, По батькові)</label>
+                    <input type="text" id="accFullName" class="form-input" value="${user.name}" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Телефон (логін)</label>
+                    <input type="tel" id="accPhone" class="form-input" value="${user.phone || ''}" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Пошта</label>
+                    <input type="email" id="accEmail2" class="form-input" value="${user.email}">
+                  </div>
+                  <button type="submit" class="btn-primary" style="padding:8px 18px;font-size:13px;">Зберегти зміни</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- 2. Особисті дані -->
+            <div class="profile-accordion-item" onclick="toggleAccordion(this)">
+              <div class="profile-accordion-header">
+                <div>
+                  <h4>Особисті дані</h4>
+                  <div class="acc-preview">${s.language || 'Українська'} · ${s.gender || 'Чоловіча'}</div>
+                </div>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="profile-accordion-body" onclick="event.stopPropagation()">
+                <form onsubmit="savePersonalData(event)">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                      <label class="form-label">Мова</label>
+                      <select id="pdLang" class="form-select">
+                        <option ${(s.language||'Українська')==='Українська'?'selected':''}>Українська</option>
+                        <option ${s.language==='Русский'?'selected':''}>Русский</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Стать</label>
+                      <select id="pdGender" class="form-select">
+                        <option ${(s.gender||'Чоловіча')==='Чоловіча'?'selected':''}>Чоловіча</option>
+                        <option ${s.gender==='Жіноча'?'selected':''}>Жіноча</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Дата народження</label>
+                    <input type="date" id="pdBirthday" class="form-input" value="${s.birthday || ''}">
+                  </div>
+                  <button type="submit" class="btn-primary" style="padding:8px 18px;font-size:13px;">Зберегти</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- 3. Мої отримувачі замовлень -->
+            <div class="profile-accordion-item" onclick="toggleAccordion(this)">
+              <div class="profile-accordion-header">
+                <div>
+                  <h4>Мої отримувачі замовлень</h4>
+                  <div class="acc-preview">Довірені особи для отримання замовлень</div>
+                </div>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="profile-accordion-body" onclick="event.stopPropagation()">
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">
+                  Ви можете додати довірену особу, яка зможе забирати ваші замовлення у поштоматах або точках видачі.
+                </p>
+                <button class="btn-secondary" style="font-size:12px;">+ Додати отримувача</button>
+              </div>
+            </div>
+
+            <!-- 4. Контакти -->
+            <div class="profile-accordion-item" onclick="toggleAccordion(this)">
+              <div class="profile-accordion-header">
+                <div>
+                  <h4>Контакти</h4>
+                  <div class="acc-preview">${user.email} (логін)</div>
+                </div>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="profile-accordion-body" onclick="event.stopPropagation()">
+                <form onsubmit="saveContacts(event)">
+                  <div class="form-group">
+                    <label class="form-label">Пошта (логін)</label>
+                    <input type="email" class="form-input" value="${user.email}" readonly style="opacity:0.6;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Viber / Telegram</label>
+                    <input type="text" id="ctMessenger" class="form-input" value="${s.messenger || user.phone || ''}" placeholder="+380">
+                  </div>
+                  <button type="submit" class="btn-primary" style="padding:8px 18px;font-size:13px;">Зберегти</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- 5. Адреса доставки -->
+            <div class="profile-accordion-item" onclick="toggleAccordion(this)">
+              <div class="profile-accordion-header">
+                <div>
+                  <h4>Адреса доставки</h4>
+                  <div class="acc-preview">${s.address || 'Не вказано'}</div>
+                </div>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="profile-accordion-body" onclick="event.stopPropagation()">
+                <form onsubmit="saveAddress(event)">
+                  <div class="form-group">
+                    <label class="form-label">Адреса / Відділення Нової Пошти</label>
+                    <input type="text" id="addrMain" class="form-input" value="${s.address || ''}" placeholder="м. Київ, Відділення Нової Пошти №1">
+                  </div>
+                  <button type="submit" class="btn-primary" style="padding:8px 18px;font-size:13px;">Зберегти</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- 6. Захоплення -->
+            <div class="profile-accordion-item" onclick="toggleAccordion(this)">
+              <div class="profile-accordion-header">
+                <div>
+                  <h4>Захоплення</h4>
+                  <div class="acc-preview">${[s.hobbyGaming!==false?'🎮 Геймінг':'', s.hobbyComputers!==false?'💻 Техніка':'', s.hobbyPhones!==false?'📱 Смартфони':''].filter(Boolean).join(', ') || 'Не вказано'}</div>
+                </div>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="profile-accordion-body" onclick="event.stopPropagation()">
+                <form onsubmit="saveHobbies(event)">
+                  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+                    <label class="checkbox-label"><input type="checkbox" id="hbGaming"    ${s.hobbyGaming    !== false ? 'checked' : ''}> 🎮 Комп'ютерні ігри та геймінг</label>
+                    <label class="checkbox-label"><input type="checkbox" id="hbComputers" ${s.hobbyComputers !== false ? 'checked' : ''}> 💻 Комп'ютерна техніка та ноутбуки</label>
+                    <label class="checkbox-label"><input type="checkbox" id="hbPhones"    ${s.hobbyPhones    !== false ? 'checked' : ''}> 📱 Флагманські смартфони та гаджети</label>
+                  </div>
+                  <button type="submit" class="btn-primary" style="padding:8px 18px;font-size:13px;">Зберегти</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- 7. Домашні тварини -->
+            <div class="profile-accordion-item" onclick="toggleAccordion(this)">
+              <div class="profile-accordion-header">
+                <div>
+                  <h4>Домашні тварини</h4>
+                  <div class="acc-preview">${[s.petDog?'🐕 Собаки':'', s.petCat?'🐈 Коти':''].filter(Boolean).join(', ') || 'Немає'}</div>
+                </div>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="profile-accordion-body" onclick="event.stopPropagation()">
+                <form onsubmit="savePets(event)">
+                  <div style="display:flex;gap:16px;margin-bottom:14px;">
+                    <label class="checkbox-label"><input type="checkbox" id="petDog" ${s.petDog?'checked':''}> 🐕 Собаки</label>
+                    <label class="checkbox-label"><input type="checkbox" id="petCat" ${s.petCat?'checked':''}> 🐈 Коти</label>
+                  </div>
+                  <button type="submit" class="btn-primary" style="padding:8px 18px;font-size:13px;">Зберегти</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- 8. Додаткова інформація -->
+            <div class="profile-accordion-item" onclick="toggleAccordion(this)">
+              <div class="profile-accordion-header">
+                <div>
+                  <h4>Додаткова інформація</h4>
+                  <div class="acc-preview" style="color:${s.noReceipts!==false?'#10b981':'var(--text-secondary)'};">
+                    ${s.noReceipts !== false ? 'Не друкувати паперові чеки та гарантійні талони' : 'Друкувати чеки та гарантійні талони'}
+                  </div>
+                </div>
+                <span class="acc-chevron">▼</span>
+              </div>
+              <div class="profile-accordion-body" onclick="event.stopPropagation()">
+                <form onsubmit="saveExtra(event)">
+                  <label class="checkbox-label" style="margin-bottom:14px;">
+                    <input type="checkbox" id="noReceipts" ${s.noReceipts !== false ? 'checked' : ''}>
+                    <span>Не друкувати паперові чеки та гарантійні талони (отримувати в електронній формі)</span>
+                  </label>
+                  <button type="submit" class="btn-primary" style="padding:8px 18px;font-size:13px;">Зберегти</button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Profile Sidebar Card -->
+          <div style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;gap:14px;">
+            <div style="text-align:center;border-bottom:1px solid var(--border-color);padding-bottom:16px;">
+              <div style="width:64px;height:64px;background:linear-gradient(135deg,var(--accent-orange),#d66410);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;font-weight:900;margin:0 auto 12px auto;box-shadow: 0 4px 15px rgba(244, 122, 32, 0.3);">
+                ${user.name.charAt(0).toUpperCase()}
+              </div>
+              <h3 style="font-size:16px;font-weight:800;text-transform:uppercase;">${user.name}</h3>
+              <span style="font-size:12px;color:var(--text-secondary);">${user.email}</span>
+              <div style="margin-top:8px;">
+                <span class="stock-tag" style="${isAdmin ? 'background: rgba(244,122,32,0.15); color: var(--accent-orange); border: 1px solid var(--accent-orange); font-weight: 700;' : 'background: rgba(16,185,129,0.15); color: #10b981;'}">
+                  ${isAdmin ? 'Адміністратор' : 'Покупець'}
+                </span>
+              </div>
+            </div>
+
+            <a href="orders.html" class="btn-secondary" style="display:flex;justify-content:space-between;align-items:center;padding:12px;">
+              <span>Мої замовлення</span><span>&rarr;</span>
+            </a>
+            <a href="cart.html" class="btn-secondary" style="display:flex;justify-content:space-between;align-items:center;padding:12px;">
+              <span>Мій кошик</span><span>&rarr;</span>
+            </a>
+            <a href="compare.html" class="btn-secondary" style="display:flex;justify-content:space-between;align-items:center;padding:12px;">
+              <span>Список порівняння</span><span>&rarr;</span>
+            </a>
+
+            <button class="btn-danger" style="width:100%;padding:12px;margin-top:4px;" onclick="AuthManager.logout()">
+              Вийти з акаунту
+            </button>
+          </div>
+
+        </div>`;
+    }
+
+    /* ── Init ──────────────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFicsitHeader('profile');
+      renderFicsitFooter();
+      renderProfileView();
+    });
+  </script>
+</body>
+</html>

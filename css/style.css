@@ -471,7 +471,7 @@ button, input, select, textarea {
 .stock-tag {
   position: absolute;
   top: 8px;
-  left: 8px;
+  right: 8px;
   padding: 3px 8px;
   border-radius: var(--radius-sm);
   font-size: 10px;

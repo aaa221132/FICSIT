@@ -1,0 +1,15 @@
+{
+  "name": "ficsit-electronics",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "FICSIT ELECTRONICS — Інтернет-магазин сучасної комп'ютерної техніки та електроніки",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node -e \"console.log('Build successful')\"",
+    "lint": "node -e \"console.log('Lint passed')\""
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

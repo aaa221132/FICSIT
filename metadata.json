@@ -1,0 +1,8 @@
+{
+  "name": "FICSIT ELECTRONICS",
+  "description": "FICSIT ELECTRONICS — Інтернет-магазин сучасної комп'ютерної техніки та електроніки",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

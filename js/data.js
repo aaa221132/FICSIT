@@ -8,7 +8,9 @@ function createRealTechSvg(type, brandColor = '#f47a20') {
     gpu: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="30" width="70" height="40" rx="4" fill="#222226" stroke="${brandColor}" stroke-width="3"/><circle cx="35" cy="50" r="12" fill="none" stroke="${brandColor}" stroke-width="3"/><circle cx="65" cy="50" r="12" fill="none" stroke="${brandColor}" stroke-width="3"/><path d="M15 45 h-8 v10 h8 Z" fill="${brandColor}"/></svg>`,
     phone: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="15" width="40" height="70" rx="8" fill="#18181b" stroke="${brandColor}" stroke-width="3"/><rect x="34" y="22" width="32" height="54" fill="#09090b"/><circle cx="50" cy="80" r="2.5" fill="${brandColor}"/></svg>`,
     monitor: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="20" width="70" height="45" rx="3" fill="#1e1e24" stroke="${brandColor}" stroke-width="3"/><rect x="18" y="23" width="64" height="39" fill="#020617"/><path d="M45 65 h10 v15 h-10 Z M32 80 h36 v4 h-36 Z" fill="${brandColor}"/></svg>`,
-    keyboard: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="35" width="70" height="30" rx="4" fill="#27272a" stroke="${brandColor}" stroke-width="3"/><path d="M22 42 h8 v5 h-8 Z M34 42 h8 v5 h-8 Z M46 42 h8 v5 h-8 Z M58 42 h8 v5 h-8 Z M70 42 h8 v5 h-8 Z M22 52 h56 v6 h-56 Z" fill="${brandColor}"/></svg>`
+    keyboard: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="35" width="70" height="30" rx="4" fill="#27272a" stroke="${brandColor}" stroke-width="3"/><path d="M22 42 h8 v5 h-8 Z M34 42 h8 v5 h-8 Z M46 42 h8 v5 h-8 Z M58 42 h8 v5 h-8 Z M70 42 h8 v5 h-8 Z M22 52 h56 v6 h-56 Z" fill="${brandColor}"/></svg>`,
+    headphones: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M22 54 A28 28 0 0 1 78 54" fill="none" stroke="${brandColor}" stroke-width="5"/><rect x="16" y="48" width="14" height="26" rx="6" fill="#27272a" stroke="${brandColor}" stroke-width="2.5"/><rect x="70" y="48" width="14" height="26" rx="6" fill="#27272a" stroke="${brandColor}" stroke-width="2.5"/></svg>`,
+    ssd: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="32" width="64" height="36" rx="4" fill="#222226" stroke="${brandColor}" stroke-width="3"/><text x="46" y="53" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">NVMe M.2</text><rect x="68" y="44" width="8" height="12" fill="${brandColor}"/></svg>`
   };
   const icon = svgs[type] || svgs.laptop;
   return `data:image/svg+xml;utf8,${encodeURIComponent(icon)}`;
@@ -170,13 +172,291 @@ const REAL_ELECTRONICS_PRODUCTS = [
     gpu: "N/A",
     image: createRealTechSvg('keyboard', '#ec4899'),
     description: "Кіберспортивна легка миша вагою 60 грам з сенсором HERO 2 (32000 DPI) та оптико-механічними перемикачами LIGHTFORCE."
+  },
+  {
+    id: "prod_macbook_air_m3",
+    title: "Ноутбук Apple MacBook Air 15\" M3 (16GB / 512GB) Midnight",
+    category: "laptops",
+    price: 68999,
+    inStock: true,
+    brand: "Apple",
+    processor: "Apple M3 (8-core)",
+    ram: "16 GB",
+    gpu: "Apple M3 (10-core GPU)",
+    image: createRealTechSvg('laptop', '#6366f1'),
+    description: "Тонкий, легкий і безшумний ультрабук із яскравим дисплеєм Liquid Retina 15.3\", підтримкою MagSafe та до 18 годин автономної роботи."
+  },
+  {
+    id: "prod_acer_predator_helios",
+    title: "Ноутбук Acer Predator Helios 16 (i7-14700HX / 32GB / RTX 4070 8GB / 240Hz)",
+    category: "laptops",
+    price: 89999,
+    inStock: true,
+    brand: "Acer",
+    processor: "Intel Core i7-14700HX",
+    ram: "32 GB DDR5",
+    gpu: "NVIDIA GeForce RTX 4070 8GB",
+    image: createRealTechSvg('laptop', '#06b6d4'),
+    description: "Геймерський ноутбук високого класу з охолодженням вентиляторами AeroBlade 3D 5-го покоління та RGB клавіатурою."
+  },
+  {
+    id: "prod_dell_xps16",
+    title: "Ноутбук Dell XPS 16 9640 (Core Ultra 7 155H / 32GB / RTX 4060 8GB / 4K OLED)",
+    category: "laptops",
+    price: 119999,
+    inStock: true,
+    brand: "Dell",
+    processor: "Intel Core Ultra 7 155H",
+    ram: "32 GB LPDDR5X",
+    gpu: "NVIDIA GeForce RTX 4060 8GB",
+    image: createRealTechSvg('laptop', '#64748b'),
+    description: "Преміум ультрабук у корпусі з обробленого алюмінію зі скляним тачпадом, сенсорною функціональною панеллю та 4K OLED екраном."
+  },
+  {
+    id: "prod_msi_raider_ge78",
+    title: "Ноутбук MSI Raider GE78 HX 14V (i9-14900HX / 64GB / RTX 4080 12GB / 240Hz)",
+    category: "laptops",
+    price: 145999,
+    inStock: true,
+    brand: "MSI",
+    processor: "Intel Core i9-14900HX",
+    ram: "64 GB DDR5",
+    gpu: "NVIDIA GeForce RTX 4080 12GB",
+    image: createRealTechSvg('laptop', '#ef4444'),
+    description: "Екстремальна продуктивність для кіберспорту і створення 3D-контенту з матрицею QHD+ 240Hz та світловою смугою Mystic Light."
+  },
+  {
+    id: "prod_rtx_4080_super",
+    title: "Відеокарта MSI GeForce RTX 4080 SUPER 16GB Gaming X Slim GDDR6X",
+    category: "components",
+    price: 54999,
+    inStock: true,
+    brand: "NVIDIA",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "NVIDIA GeForce RTX 4080 SUPER 16GB",
+    image: createRealTechSvg('gpu', '#10b981'),
+    description: "Оновлений флагман із технологіями DLSS 3.5, трасуванням променів у реальному часі та ефективним охолодженням Tri Frozr 3."
+  },
+  {
+    id: "prod_rtx_4070_ti_super",
+    title: "Відеокарта Gigabyte GeForce RTX 4070 Ti SUPER Gaming OC 16GB GDDR6X",
+    category: "components",
+    price: 42999,
+    inStock: true,
+    brand: "NVIDIA",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "NVIDIA GeForce RTX 4070 Ti SUPER 16GB",
+    image: createRealTechSvg('gpu', '#3b82f6'),
+    description: "Оптимальне рішення для 2K та 4K геймінгу на ультра-налаштуваннях із 16 ГБ пам'яті та 256-бітною шиною."
+  },
+  {
+    id: "prod_rx_7900_xtx",
+    title: "Відеокарта Sapphire AMD Radeon RX 7900 XTX Nitro+ Vapor-X 24GB",
+    category: "components",
+    price: 49999,
+    inStock: true,
+    brand: "AMD",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "AMD Radeon RX 7900 XTX 24GB",
+    image: createRealTechSvg('gpu', '#dc2626'),
+    description: "Найпотужніша відеокарта від AMD на базі RDNA 3 з 24 ГБ GDDR6 пам'яті, випаровувальною камерою та подвійним BIOS."
+  },
+  {
+    id: "prod_intel_i7_14700k",
+    title: "Процесор Intel Core i7-14700K (LGA1700, 20 ядер, 28 потоків, до 5.6 GHz)",
+    category: "components",
+    price: 18499,
+    inStock: true,
+    brand: "Intel",
+    processor: "Intel Core i7-14700K",
+    ram: "N/A",
+    gpu: "Intel UHD Graphics 770",
+    image: createRealTechSvg('cpu', '#0284c7'),
+    description: "Збалансований процесор з 8 продуктивними та 12 енергоефективними ядрами, що забезпечує колосальну швидкість у іграх та софті."
+  },
+  {
+    id: "prod_amd_ryzen_7950x3d",
+    title: "Процесор AMD Ryzen 9 7950X3D (AM5, 16 ядер, 32 потоки, 128MB 3D V-Cache)",
+    category: "components",
+    price: 29999,
+    inStock: true,
+    brand: "AMD",
+    processor: "AMD Ryzen 9 7950X3D",
+    ram: "N/A",
+    gpu: "AMD Radeon Graphics",
+    image: createRealTechSvg('cpu', '#ea580c'),
+    description: "Ультимативний процесор як для важкого рендерингу, так і для ультра-геймінгу завдяки кешу 3D V-Cache 128MB."
+  },
+  {
+    id: "prod_samsung_990_pro_2tb",
+    title: "Накопичувач SSD Samsung 990 PRO Heatsink 2TB M.2 PCIe 4.0 NVMe",
+    category: "components",
+    price: 8999,
+    inStock: true,
+    brand: "Samsung",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "N/A",
+    image: createRealTechSvg('ssd', '#0ea5e9'),
+    description: "Швидкість читання до 7450 МБ/с і запису до 6900 МБ/с із фірмовим радіатором охолодження для ПК та PlayStation 5."
+  },
+  {
+    id: "prod_kingston_fury_64gb",
+    title: "Оперативна пам'ять Kingston FURY Renegade RGB DDR5-6400 64GB (2x32GB)",
+    category: "components",
+    price: 11499,
+    inStock: true,
+    brand: "Kingston",
+    processor: "N/A",
+    ram: "64 GB DDR5",
+    gpu: "N/A",
+    image: createRealTechSvg('cpu', '#f59e0b'),
+    description: "Преміальний двоканальний комплект надшвидкої оперативної пам'яті з підтримкою профілів Intel XMP 3.0 та агресивними радіаторами."
+  },
+  {
+    id: "prod_iphone15_pro",
+    title: "Смартфон Apple iPhone 15 Pro 256GB Natural Titanium",
+    category: "smartphones",
+    price: 51999,
+    inStock: true,
+    brand: "Apple",
+    processor: "Apple A17 Pro",
+    ram: "8 GB",
+    gpu: "A17 Pro 6-core GPU",
+    image: createRealTechSvg('phone', '#d97706'),
+    description: "Компактний флагман у легкому титановому корпусі з дисплеєм Super Retina XDR 120 Гц ProMotion і камерою 48 Мп."
+  },
+  {
+    id: "prod_google_pixel_8_pro",
+    title: "Смартфон Google Pixel 8 Pro 12/256GB Obsidian (Google Tensor G3)",
+    category: "smartphones",
+    price: 37999,
+    inStock: true,
+    brand: "Google",
+    processor: "Google Tensor G3",
+    ram: "12 GB",
+    gpu: "Immortalis-G715s MC10",
+    image: createRealTechSvg('phone', '#64748b'),
+    description: "Смартфон із найкращою фотокамерою, обробкою фотографій Magic Editor, нічним режимом Night Sight та чистим Android."
+  },
+  {
+    id: "prod_xiaomi_14_ultra",
+    title: "Смартфон Xiaomi 14 Ultra 16/512GB Black (Leica Quad-Camera 50MP)",
+    category: "smartphones",
+    price: 51999,
+    inStock: true,
+    brand: "Xiaomi",
+    processor: "Snapdragon 8 Gen 3",
+    ram: "16 GB",
+    gpu: "Adreno 750",
+    image: createRealTechSvg('phone', '#ef4444'),
+    description: "Фотофлагман з оптикою Leica нового покоління, 1-дюймовим сенсором зі змінною діафрагмою f/1.63-f/4.0 та зарядкою 90 Вт."
+  },
+  {
+    id: "prod_asus_rog_swift_pg32",
+    title: "Монітор 32\" ASUS ROG Swift OLED PG32UCDM (3840x2160, 240Hz, QD-OLED)",
+    category: "monitors",
+    price: 62999,
+    inStock: true,
+    brand: "ASUS",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "N/A",
+    image: createRealTechSvg('monitor', '#8b5cf6'),
+    description: "Флагманський 32-дюймовий 4K QD-OLED монітор третього покоління із частотою 240 Гц, відгуком 0.03 мс та графеновим радіатором."
+  },
+  {
+    id: "prod_dell_alienware_aw34",
+    title: "Монітор 34\" Dell Alienware AW3423DWF Curved QD-OLED (3440x1440, 165Hz)",
+    category: "monitors",
+    price: 44999,
+    inStock: true,
+    brand: "Dell",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "N/A",
+    image: createRealTechSvg('monitor', '#06b6d4'),
+    description: "Вигнутий геймерський ультраширокий QD-OLED монітор формату 21:9 із підтримкою DisplayHDR True Black 400."
+  },
+  {
+    id: "prod_logitech_mx_master3s",
+    title: "Миша бездротова Logitech MX Master 3S Performance Graphite",
+    category: "accessories",
+    price: 4799,
+    inStock: true,
+    brand: "Logitech",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "N/A",
+    image: createRealTechSvg('keyboard', '#475569'),
+    description: "Еталонна ергономічна миша для роботи з електромагнітним колесом прокрутки MagSpeed, тихими кліками Quiet Clicks та сенсором 8000 DPI."
+  },
+  {
+    id: "prod_steelseries_apex_pro",
+    title: "Клавіатура SteelSeries Apex Pro TKL Gen 3 OmniPoint 3.0 RGB USB",
+    category: "accessories",
+    price: 10999,
+    inStock: true,
+    brand: "SteelSeries",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "N/A",
+    image: createRealTechSvg('keyboard', '#e11d48'),
+    description: "Найшвидша клавіатура у світі з регульованою точкою спрацьовування перемикачів від 0.1 мм до 4.0 мм, OLED дисплеєм та Rapid Trigger."
+  },
+  {
+    id: "prod_sony_wh1000xm5",
+    title: "Бездротові навушники Sony WH-1000XM5 Black з активним шумозаглушенням ANC",
+    category: "accessories",
+    price: 14999,
+    inStock: true,
+    brand: "Sony",
+    processor: "N/A",
+    ram: "N/A",
+    gpu: "N/A",
+    image: createRealTechSvg('headphones', '#3b82f6'),
+    description: "Лідер індустрії у сфері активного шумозаглушення з двома процесорами QN1/V1, 8 мікрофонами, підтримкою LDAC та автономністю 30 год."
+  },
+  {
+    id: "prod_apple_airpods_max",
+    title: "Навушники Apple AirPods Max Space Gray з чохлом Smart Case",
+    category: "accessories",
+    price: 23999,
+    inStock: true,
+    brand: "Apple",
+    processor: "Apple H1 (x2)",
+    ram: "N/A",
+    gpu: "N/A",
+    image: createRealTechSvg('headphones', '#94a3b8'),
+    description: "Преміальні повнорозмірні навушники від Apple з динамічними випромінювачами, просторовим аудіо Spatial Audio та активним шумопоглинанням."
   }
 ];
 
 // Initialize Database Storage
 function initDatabase() {
-  if (!localStorage.getItem('db_products')) {
+  const existingProducts = localStorage.getItem('db_products');
+  if (!existingProducts) {
     localStorage.setItem('db_products', JSON.stringify(REAL_ELECTRONICS_PRODUCTS));
+  } else {
+    try {
+      const currentList = JSON.parse(existingProducts);
+      const existingIds = new Set(currentList.map(p => p.id));
+      let changed = false;
+      REAL_ELECTRONICS_PRODUCTS.forEach(p => {
+        if (!existingIds.has(p.id)) {
+          currentList.push(p);
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('db_products', JSON.stringify(currentList));
+      }
+    } catch (e) {
+      localStorage.setItem('db_products', JSON.stringify(REAL_ELECTRONICS_PRODUCTS));
+    }
   }
   if (!localStorage.getItem('db_users')) {
     localStorage.setItem('db_users', JSON.stringify([

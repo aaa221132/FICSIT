@@ -360,17 +360,17 @@
         const cardCvv = document.getElementById('cardCvv').value.trim();
 
         if (cardNum.length < 16) {
-          alert('Будь ласка, введіть коректний 16-значний номер банківської картки.');
+          if (window.showToast) window.showToast('Будь ласка, введіть коректний 16-значний номер банківської картки.', 'warning');
           document.getElementById('cardNumber').focus();
           return;
         }
         if (cardExp.length < 5) {
-          alert('Будь ласка, введіть термін дії картки у форматі ММ/РР.');
+          if (window.showToast) window.showToast('Будь ласка, введіть термін дії картки у форматі ММ/РР.', 'warning');
           document.getElementById('cardExpiry').focus();
           return;
         }
         if (cardCvv.length < 3) {
-          alert('Будь ласка, введіть 3-значний код CVV/CVC.');
+          if (window.showToast) window.showToast('Будь ласка, введіть 3-значний код CVV/CVC.', 'warning');
           document.getElementById('cardCvv').focus();
           return;
         }

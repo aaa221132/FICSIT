@@ -6,6 +6,8 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+
+       gtag('config', 'G-V1QNYDX8YL');
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -115,7 +117,7 @@
 
       const catalogBtn = document.getElementById('openCatalogBtn');
       if (catalogBtn) {
-        catalogBtn.addEventListener('click', () => {
+        catalogBtn.addEventListener('click', (e) => {
           gtag('event', 'click_catalog_btn');
           console.log('Подія click_catalog_btn відправлена в GA!');
         });

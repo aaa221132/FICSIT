@@ -31,10 +31,10 @@
           Купуйте топові ноутбуки Apple MacBook, ASUS ROG, процесори Intel Core i9 та AMD Ryzen, відеокарти RTX 4090, смартфони iPhone 15 Pro Max та монітори з офіційною гарантією.
         </p>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <a href="catalog.html" class="btn-primary" style="padding: 10px 20px; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-            <span>Відкрити Каталог Товарів</span>
-          </a>
+    <a id="openCatalogBtn" href="catalog.html" class="btn-primary" style="padding: 10px 20px; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Відкрити Каталог Товарів</span>
+    </a>  
           <a href="compare.html" class="btn-secondary" style="padding: 10px 18px; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
             <span>Порівняння Товарів</span>
@@ -112,6 +112,14 @@
     document.addEventListener('DOMContentLoaded', () => {
       renderFicsitHeader('home');
       renderFicsitFooter();
+
+      const catalogBtn = document.getElementById('openCatalogBtn');
+      if (catalogBtn) {
+        catalogBtn.addEventListener('click', () => {
+          gtag('event', 'click_catalog_btn');
+          console.log('Подія click_catalog_btn відправлена в GA!');
+        });
+      }
 
       // Render Hot Offers
       const products = DataStore.getProducts();
